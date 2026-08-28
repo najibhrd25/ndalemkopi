@@ -1,0 +1,86 @@
+---
+import Navbar from '../components/Navbar.astro';
+import Footer from '../components/Footer.astro';
+import '../styles/global.css';
+
+interface Props {
+  title?: string;
+  description?: string;
+  image?: string;
+  canonicalUrl?: string;
+}
+
+const {
+  title = 'Ndalem Kopi — Ngopi, Mangan, lan Crita',
+  description = 'Ndalem Kopi adalah ruang santai bernuansa Jawa kontemporer untuk ngopi, menikmati hidangan khas, dan berbagi cerita tanpa tergesa-gesa.',
+  image = '/images/hero/hero-ndalem.webp',
+  canonicalUrl = Astro.url.href,
+} = Astro.props;
+
+const siteName = 'Ndalem Kopi';
+---
+
+<!DOCTYPE html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonicalUrl} />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="theme-color" content="#281912" />
+
+    <!-- Google Fonts Preconnect -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content={canonicalUrl} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:image" content={new URL(image, Astro.url)} />
+    <meta property="og:site_name" content={siteName} />
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image" />
+    <meta property="twitter:url" content={canonicalUrl} />
+    <meta property="twitter:title" content={title} />
+    <meta property="twitter:description" content={description} />
+    <meta property="twitter:image" content={new URL(image, Astro.url)} />
+
+    <!-- JSON-LD Structured Data for LocalBusiness -->
+    <script is:inline type="application/ld+json" set:html={JSON.stringify({
+      "@context": "https://schema.org",
+      "@type": "CafeOrCoffeeShop",
+      "name": "Ndalem Kopi",
+      "image": new URL(image, Astro.url).toString(),
+      "description": description,
+      "address": {
+        "@type": "PostalAddress",
+        "streetAddress": "Jl. Pendopo Asri No. 12",
+        "addressRegion": "Jawa Timur",
+        "addressCountry": "ID"
+      },
+      "openingHours": "Mo-Su 08:00-23:00",
+      "servesCuisine": ["Javanese", "Indonesian", "Coffee"],
+      "priceRange": "Rp5.000 - Rp25.000"
+    })} />
+  </head>
+  <body>
+    <a href="#main-content" class="skip-link">Langsung menyang konten utama</a>
+
+    <Navbar />
+
+    <main id="main-content">
+      <slot />
+    </main>
+
+    <Footer />
+  </body>
+</html>

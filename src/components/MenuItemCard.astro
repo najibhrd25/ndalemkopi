@@ -1,0 +1,144 @@
+---
+import type { MenuItem } from '../data/menu';
+import { formatPrice } from '../data/menu';
+
+interface Props {
+  item: MenuItem;
+  variant?: 'editorial' | 'card';
+}
+
+const { item, variant = 'editorial' } = Astro.props;
+---
+
+{variant === 'editorial' ? (
+  <article class="menu-item-row">
+    <div class="menu-item-header">
+      <div class="menu-item-title-wrap">
+        <h3 class="menu-item-name">{item.name}</h3>
+        {item.signature && <span class="badge badge-signature">Signature</span>}
+        {item.favorite && !item.signature && <span class="badge badge-favorite">Favorit</span>}
+      </div>
+      <span class="dot-leader" aria-hidden="true"></span>
+      <span class="menu-item-price">{formatPrice(item.price)}</span>
+    </div>
+    {item.description && <p class="menu-item-desc">{item.description}</p>}
+    {item.notes && <p class="menu-item-note">{item.notes}</p>}
+  </article>
+) : (
+  <article class="menu-card text-center" data-category={item.category} data-type={item.type}>
+    <div class="menu-card-body">
+      <div class="menu-card-top">
+        <div class="menu-card-title-group">
+          <h3 class="menu-card-name">{item.name}</h3>
+          <div class="badge-group">
+            {item.signature && <span class="badge badge-signature">Signature</span>}
+            {item.favorite && <span class="badge badge-favorite">Favorit</span>}
+          </div>
+        </div>
+        <span class="menu-card-price">{formatPrice(item.price)}</span>
+      </div>
+
+      {item.description && <p class="menu-card-desc">{item.description}</p>}
+    </div>
+    
+    {item.notes && (
+      <div class="menu-card-footer">
+        <span class="menu-item-note">{item.notes}</span>
+      </div>
+    )}
+  </article>
+)}
+
+<style>
+  /* Card specific styles (Center aligned for /menu) */
+  .menu-card {
+    background-color: var(--color-bg-card);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    padding: var(--space-5);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    text-align: center;
+    gap: var(--space-3);
+    transition: all var(--transition-fast);
+  }
+
+  .menu-card:hover {
+    border-color: var(--color-terracotta);
+    box-shadow: var(--shadow-subtle);
+    transform: translateY(-2px);
+  }
+
+  .menu-card-body {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .menu-card-top {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-2);
+    margin-bottom: var(--space-2);
+    width: 100%;
+  }
+
+  .menu-card-title-group {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-1);
+    text-align: center;
+  }
+
+  .menu-card-name {
+    font-family: var(--font-serif);
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: var(--color-wood);
+    line-height: 1.3;
+    text-align: center;
+  }
+
+  .badge-group {
+    display: flex;
+    justify-content: center;
+    gap: var(--space-1);
+    flex-wrap: wrap;
+  }
+
+  .menu-card-price {
+    font-family: var(--font-sans);
+    font-size: 0.9375rem;
+    font-weight: 700;
+    color: var(--color-wood);
+    background-color: var(--color-bg-surface);
+    padding: 0.25rem 0.8rem;
+    border-radius: var(--radius-pill);
+    white-space: nowrap;
+    display: inline-block;
+  }
+
+  .menu-card-desc {
+    font-size: var(--text-xs);
+    color: var(--color-text-muted);
+    line-height: 1.5;
+    text-align: center;
+  }
+
+  .menu-card-footer {
+    width: 100%;
+    padding-top: var(--space-2);
+    border-top: 1px dashed var(--color-border-subtle);
+    text-align: center;
+  }
+
+  .menu-item-note {
+    display: block;
+    text-align: center;
+  }
+</style>

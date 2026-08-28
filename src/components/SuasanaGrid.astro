@@ -1,0 +1,143 @@
+---
+interface Props {
+  showTitle?: boolean;
+}
+
+const { showTitle = false } = Astro.props;
+---
+
+<div class="suasana-wrapper">
+  {showTitle && (
+    <div class="suasana-header text-center">
+      <span class="eyebrow">NGASO SEDHELA</span>
+      <h2 class="font-serif suasana-title">Suasana ing Ndalem Kopi</h2>
+      <p class="suasana-subtitle">Esuk kanggo miwiti. Sore kanggo crita. Wengi kanggo ngaso.</p>
+    </div>
+  )}
+
+  <div class="asym-grid">
+    <!-- Main Large Frame -->
+    <div class="picture-frame asym-item-main">
+      <img
+        src="/images/cafe/pendopo-sore.webp"
+        alt="Suasana sore di pendopo Ndalem Kopi dengan taman hijau asri"
+        loading="lazy"
+        width="800"
+        height="500"
+      />
+      <div class="frame-caption">
+        <span class="caption-tag">Pendopo Joglo</span>
+        <span class="caption-text">Hawane ayem, pas kanggo lerem</span>
+      </div>
+    </div>
+
+    <!-- Second Frame: Warm Interior / Wood table -->
+    <div class="picture-frame asym-item-secondary">
+      <img
+        src="/images/cafe/meja-kayu.webp"
+        alt="Sudut meja kayu hangat di dalam Ndalem Kopi"
+        loading="lazy"
+        width="600"
+        height="400"
+      />
+      <div class="frame-caption">
+        <span class="caption-tag">Pojok Ndalem</span>
+      </div>
+    </div>
+
+    <!-- Third Frame: Signature Coffee Ritual -->
+    <div class="picture-frame asym-item-tertiary">
+      <img
+        src="/images/menu/kopi-ndalem.webp"
+        alt="Secangkir Kopi Ndalem panas di atas meja kayu"
+        loading="lazy"
+        width="600"
+        height="400"
+      />
+      <div class="frame-caption">
+        <span class="caption-tag">Kopi Tubruk Ndalem</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  .suasana-header {
+    margin-bottom: var(--space-10);
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .suasana-title {
+    font-size: var(--text-3xl);
+    font-weight: 600;
+    margin-bottom: var(--space-2);
+  }
+
+  .suasana-subtitle {
+    font-size: var(--text-base);
+    color: var(--color-text-muted);
+  }
+
+  .picture-frame {
+    position: relative;
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    background-color: var(--color-bg-surface);
+    border: 1px solid var(--color-border);
+  }
+
+  .picture-frame img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform var(--transition-slow);
+  }
+
+  .picture-frame:hover img {
+    transform: scale(1.03);
+  }
+
+  .frame-caption {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: var(--space-4);
+    background: linear-gradient(to top, rgba(30, 19, 13, 0.85) 0%, rgba(30, 19, 13, 0) 100%);
+    color: #FFFFFF;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    pointer-events: none;
+  }
+
+  .caption-tag {
+    font-family: var(--font-sans);
+    font-size: var(--text-xs);
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--color-amber);
+  }
+
+  .caption-text {
+    font-family: var(--font-serif);
+    font-size: var(--text-sm);
+    color: var(--color-text-light);
+  }
+
+  @media (max-width: 767px) {
+    .asym-grid {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-4);
+    }
+
+    .picture-frame {
+      height: 240px;
+    }
+  }
+</style>

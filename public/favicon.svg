@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none">
+  <!-- Background circle in warm coffee tone -->
+  <rect width="64" height="64" rx="16" fill="#281912"/>
+  
+  <!-- Javanese Joglo roof contour subtle accent -->
+  <path d="M32 10 L48 20 L44 23 L20 23 L16 20 Z" fill="#C58B35" opacity="0.9"/>
+  <path d="M22 23 L42 23 L40 26 L24 26 Z" fill="#B85D19"/>
+  
+  <!-- Coffee cup body -->
+  <path d="M19 28 H45 C45 28 45 46 32 46 C19 46 19 28 19 28 Z" fill="#FBF8F3"/>
+  
+  <!-- Coffee cup handle -->
+  <path d="M45 32 H49 C51.2 32 53 33.8 53 36 C53 38.2 51.2 40 49 40 H44.2" stroke="#FBF8F3" stroke-width="3" stroke-linecap="round"/>
+  
+  <!-- Steam lines (Warm & serene) -->
+  <path d="M27 20 C25.5 17 28.5 14 27 12" stroke="#C58B35" stroke-width="2" stroke-linecap="round"/>
+  <path d="M32 20 C30.5 16 33.5 13 32 11" stroke="#C58B35" stroke-width="2" stroke-linecap="round"/>
+  <path d="M37 20 C35.5 17 38.5 14 37 12" stroke="#C58B35" stroke-width="2" stroke-linecap="round"/>
+  
+  <!-- Saucer plate -->
+  <path d="M15 50 C24 53 40 53 49 50" stroke="#C58B35" stroke-width="3" stroke-linecap="round"/>
+</svg>

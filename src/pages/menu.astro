@@ -1,0 +1,335 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import MenuItemCard from '../components/MenuItemCard.astro';
+import { menuItems, CATEGORIES } from '../data/menu';
+
+const drinkCategories = CATEGORIES.filter((c) => c.type === 'minuman');
+const foodCategories = CATEGORIES.filter((c) => c.type === 'makanan');
+---
+
+<BaseLayout
+  title="Menu Ndalem Kopi — Makanan & Minuman"
+  description="Daftar lengkap menu makanan dan minuman khas Ndalem Kopi. Kopi tubruk, wedangan rempah, sego blendi, indomie nyemek, dan aneka camilan dengan harga terjangkau."
+>
+  <div class="menu-page-header">
+    <div class="container text-center">
+      <span class="eyebrow">MENU NDALEM</span>
+      <h1 class="page-title">Suguhan Ndalem Kopi</h1>
+      <p class="page-subtitle">
+        Suguhan kanggo ngancani critamu. Saka kopi tubruk, wedangan rempah, tekan lawuh sego jawa.
+      </p>
+
+      <!-- Filter Tabs -->
+      <div class="filter-bar" role="tablist" aria-label="Filter Tipe Menu">
+        <button
+          type="button"
+          class="filter-btn active"
+          data-filter="all"
+          role="tab"
+          aria-selected="true"
+          id="tab-all"
+        >
+          Kabeh (Semua)
+        </button>
+        <button
+          type="button"
+          class="filter-btn"
+          data-filter="minuman"
+          role="tab"
+          aria-selected="false"
+          id="tab-minuman"
+        >
+          Ombenan (Minuman)
+        </button>
+        <button
+          type="button"
+          class="filter-btn"
+          data-filter="makanan"
+          role="tab"
+          aria-selected="false"
+          id="tab-makanan"
+        >
+          Panganan (Makanan)
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <section class="section menu-content-section" aria-label="Daftar Menu">
+    <div class="container">
+
+      <!-- ===================================================================
+           OMBENAN (MINUMAN) SECTION
+           =================================================================== -->
+      <div class="menu-type-block" id="section-minuman" data-menu-type="minuman">
+        <div class="type-header text-center">
+          <div class="type-header-content">
+            <span class="eyebrow">RACIKAN BAR</span>
+            <h2 class="type-title">Ombenan (Minuman)</h2>
+            <p class="type-desc">Seduhan kopi panas, wedangan herbal alami, lan ombenan es seger.</p>
+          </div>
+        </div>
+
+        {drinkCategories.map((category) => {
+          const items = menuItems.filter((i) => i.category === category.id);
+          if (items.length === 0) return null;
+
+          return (
+            <div class="category-block" data-category-id={category.id}>
+              <div class="category-header text-center">
+                <h3 class="category-title">{category.name}</h3>
+                {category.description && <p class="category-desc">{category.description}</p>}
+                {category.id === 'hot-coffee' && (
+                  <div class="sugar-badge-wrap">
+                    <span class="sugar-badge">
+                      ☕ Pilihan Gula: Biasa (+0) / Tropicana (+1.000)
+                    </span>
+                  </div>
+                )}
+              </div>
+
+              <div class="menu-grid">
+                {items.map((item) => (
+                  <MenuItemCard item={item} variant="card" />
+                ))}
+              </div>
+            </div>
+          );
+        })}
+      </div>
+
+      <!-- ===================================================================
+           PANGANAN (MAKANAN) SECTION
+           =================================================================== -->
+      <div class="menu-type-block" id="section-makanan" data-menu-type="makanan">
+        <div class="type-header text-center">
+          <div class="type-header-content">
+            <span class="eyebrow">SAJIAN PAWON</span>
+            <h2 class="type-title">Panganan (Makanan)</h2>
+            <p class="type-desc">Sego blendi khas, bakmi jowo, sego serba 10K, lan aneka gorengan renyah.</p>
+          </div>
+        </div>
+
+        {foodCategories.map((category) => {
+          const items = menuItems.filter((i) => i.category === category.id);
+          if (items.length === 0) return null;
+
+          return (
+            <div class="category-block" data-category-id={category.id}>
+              <div class="category-header text-center">
+                <h3 class="category-title">{category.name}</h3>
+                {category.description && <p class="category-desc">{category.description}</p>}
+              </div>
+
+              <div class="menu-grid">
+                {items.map((item) => (
+                  <MenuItemCard item={item} variant="card" />
+                ))}
+              </div>
+            </div>
+          );
+        })}
+      </div>
+
+      <!-- Empty state container for filtered results -->
+      <div class="empty-state" id="empty-state-msg" style="display: none;">
+        <p>Ora ana menu sing cocog karo pilihan iki.</p>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- Sticky Info Bar -->
+  <aside class="menu-info-banner">
+    <div class="container">
+      <div class="info-banner-content">
+        <p>
+          <strong>Catatan:</strong> Sak kabehe menu dimasak lan diseduh seger nalika dipesen. Matur nuwun wis rawuh ing Ndalem Kopi.
+        </p>
+      </div>
+    </div>
+  </aside>
+</BaseLayout>
+
+<style>
+  .menu-page-header {
+    padding-top: var(--space-12);
+    padding-bottom: var(--space-6);
+    background-color: var(--color-bg-surface);
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .page-title {
+    font-size: var(--text-4xl);
+    font-weight: 600;
+    margin-bottom: var(--space-2);
+  }
+
+  @media (min-width: 768px) {
+    .page-title {
+      font-size: var(--text-5xl);
+    }
+  }
+
+  .page-subtitle {
+    font-size: var(--text-base);
+    color: var(--color-text-muted);
+    max-width: 580px;
+    margin-left: auto;
+    margin-right: auto;
+    margin-bottom: var(--space-8);
+  }
+
+  .menu-content-section {
+    padding-top: var(--space-10);
+    padding-bottom: var(--space-16);
+  }
+
+  .menu-type-block {
+    margin-bottom: var(--space-16);
+  }
+
+  .menu-type-block.hidden-type {
+    display: none;
+  }
+
+  .type-header {
+    border-bottom: 2px solid var(--color-wood);
+    padding-bottom: var(--space-4);
+    margin-bottom: var(--space-8);
+    text-align: center;
+  }
+
+  .type-title {
+    font-size: var(--text-3xl);
+    font-weight: 600;
+    color: var(--color-wood);
+  }
+
+  .type-desc {
+    font-size: var(--text-sm);
+    color: var(--color-text-muted);
+    margin-top: var(--space-1);
+  }
+
+  .category-block {
+    margin-bottom: var(--space-12);
+  }
+
+  .category-header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-1);
+    margin-bottom: var(--space-6);
+    padding-bottom: var(--space-3);
+    border-bottom: 1px dashed var(--color-border);
+    text-align: center;
+  }
+
+  .category-title {
+    font-family: var(--font-serif);
+    font-size: var(--text-2xl);
+    font-weight: 600;
+    color: var(--color-wood);
+  }
+
+  .category-desc {
+    font-size: var(--text-sm);
+    color: var(--color-text-muted);
+  }
+
+  .sugar-badge-wrap {
+    margin-top: var(--space-2);
+  }
+
+  .sugar-badge {
+    font-size: var(--text-xs);
+    color: var(--color-terracotta);
+    background-color: var(--color-amber-soft);
+    padding: 0.25rem 0.75rem;
+    border-radius: var(--radius-pill);
+    border: 1px solid rgba(184, 93, 25, 0.25);
+    display: inline-block;
+  }
+
+  .menu-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-4);
+  }
+
+  @media (min-width: 640px) {
+    .menu-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .menu-grid {
+      grid-template-columns: repeat(3, 1fr);
+      gap: var(--space-6);
+    }
+  }
+
+  .menu-info-banner {
+    background-color: var(--color-wood);
+    color: var(--color-text-light);
+    padding: var(--space-4) 0;
+    font-size: var(--text-xs);
+    border-top: 1px solid var(--color-border-dark);
+  }
+
+  .info-banner-content {
+    text-align: center;
+    color: var(--color-text-light-muted);
+  }
+
+  .info-banner-content strong {
+    color: var(--color-amber);
+  }
+
+  .empty-state {
+    text-align: center;
+    padding: var(--space-12) 0;
+    color: var(--color-text-muted);
+    font-size: var(--text-lg);
+  }
+</style>
+
+<script>
+  function setupMenuFilter() {
+    const filterButtons = document.querySelectorAll<HTMLButtonElement>('.filter-btn');
+    const typeBlocks = document.querySelectorAll<HTMLElement>('.menu-type-block');
+
+    if (!filterButtons.length || !typeBlocks.length) return;
+
+    filterButtons.forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const filterValue = btn.getAttribute('data-filter');
+
+        // Update active class & ARIA
+        filterButtons.forEach((b) => {
+          b.classList.remove('active');
+          b.setAttribute('aria-selected', 'false');
+        });
+        btn.classList.add('active');
+        btn.setAttribute('aria-selected', 'true');
+
+        // Filter type blocks
+        typeBlocks.forEach((block) => {
+          const blockType = block.getAttribute('data-menu-type');
+          if (filterValue === 'all' || filterValue === blockType) {
+            block.classList.remove('hidden-type');
+          } else {
+            block.classList.add('hidden-type');
+          }
+        });
+      });
+    });
+  }
+
+  setupMenuFilter();
+  document.addEventListener('astro:page-load', setupMenuFilter);
+</script>
