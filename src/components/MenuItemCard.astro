@@ -4,13 +4,13 @@ import { formatPrice } from '../data/menu';
 
 interface Props {
   item: MenuItem;
-  variant?: 'editorial' | 'card';
+  variant?: 'editorial' | 'card' | 'compact';
 }
 
 const { item, variant = 'editorial' } = Astro.props;
 ---
 
-{variant === 'editorial' ? (
+{variant === 'editorial' && (
   <article class="menu-item-row" data-item-id={item.id}>
     {item.image && (
       <div class="menu-item-thumb">
@@ -20,7 +20,7 @@ const { item, variant = 'editorial' } = Astro.props;
     <div class="menu-item-content">
       <div class="menu-item-header">
         <div class="menu-item-title-wrap">
-          <h3 class="menu-item-name">{item.name}</h3>
+          <h3 class="menu-item-name font-serif">{item.name}</h3>
           {item.signature && <span class="badge badge-signature">Signature</span>}
           {item.favorite && !item.signature && <span class="badge badge-favorite">Favorit</span>}
         </div>
@@ -31,7 +31,40 @@ const { item, variant = 'editorial' } = Astro.props;
       {item.notes && <p class="menu-item-note">{item.notes}</p>}
     </div>
   </article>
-) : (
+)}
+
+{variant === 'compact' && (
+  <article class="compact-card" data-item-id={item.id} data-category={item.category} data-type={item.type}>
+    <div class="compact-media-wrap">
+      {item.image ? (
+        <img src={item.image} alt={item.name} loading="lazy" class="compact-img" />
+      ) : (
+        <div class="compact-placeholder">
+          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+            <circle cx="8.5" cy="8.5" r="1.5"></circle>
+            <polyline points="21 15 16 10 5 21"></polyline>
+          </svg>
+          <span class="compact-placeholder-text">{item.categoryName || (item.type === 'minuman' ? 'Ombenan' : 'Panganan')}</span>
+        </div>
+      )}
+      <div class="compact-badges">
+        {item.signature && <span class="badge badge-signature">Signature</span>}
+        {item.favorite && !item.signature && <span class="badge badge-favorite">Favorit</span>}
+      </div>
+    </div>
+    
+    <div class="compact-body">
+      <div class="compact-header">
+        <h3 class="compact-title font-serif">{item.name}</h3>
+        <span class="compact-price">{formatPrice(item.price)}</span>
+      </div>
+      {item.description && <p class="compact-desc">{item.description}</p>}
+    </div>
+  </article>
+)}
+
+{variant === 'card' && (
   <article class="menu-card" data-item-id={item.id} data-category={item.category} data-type={item.type}>
     {/* Dedicated Photo Space (User requirement) */}
     <div class="menu-card-media">
@@ -70,7 +103,7 @@ const { item, variant = 'editorial' } = Astro.props;
 
     <div class="menu-card-body">
       <div class="menu-card-header-info">
-        <h3 class="menu-card-name">{item.name}</h3>
+        <h3 class="menu-card-name font-serif">{item.name}</h3>
         <span class="menu-card-price">{formatPrice(item.price)}</span>
       </div>
 
@@ -103,7 +136,116 @@ const { item, variant = 'editorial' } = Astro.props;
     object-fit: cover;
   }
 
-  /* Card specific styles (Center aligned & equal height bento grid friendly) */
+  /* Compact Card (Reference: galektech.vercel.app/project - compact footprint, rounded media, 3-in-a-row) */
+  .compact-card {
+    background-color: var(--color-bg-card);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    padding: 0.85rem;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    transition: transform var(--transition-fast), border-color var(--transition-fast), box-shadow var(--transition-fast);
+    box-shadow: 0 2px 6px rgba(40, 29, 23, 0.04);
+  }
+
+  .compact-card:hover {
+    border-color: var(--color-terracotta);
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(40, 29, 23, 0.08);
+  }
+
+  .compact-media-wrap {
+    position: relative;
+    width: 100%;
+    height: 135px;
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    background-color: var(--color-bg-surface);
+    margin-bottom: 0.75rem;
+  }
+
+  .compact-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform var(--transition-normal);
+  }
+
+  .compact-card:hover .compact-img {
+    transform: scale(1.05);
+  }
+
+  .compact-placeholder {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.35rem;
+    background: linear-gradient(135deg, #F5EFE6, #EAE0D2);
+    color: var(--color-text-subtle);
+  }
+
+  .compact-placeholder-text {
+    font-size: 0.625rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    color: var(--color-text-muted);
+  }
+
+  .compact-badges {
+    position: absolute;
+    top: 6px;
+    right: 6px;
+    display: flex;
+    gap: 4px;
+    z-index: 2;
+  }
+
+  .compact-body {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    gap: 0.35rem;
+  }
+
+  .compact-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 0.5rem;
+  }
+
+  .compact-title {
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: var(--color-wood);
+    line-height: 1.25;
+    margin: 0;
+  }
+
+  .compact-price {
+    font-family: var(--font-sans);
+    font-size: 0.875rem;
+    font-weight: 700;
+    color: var(--color-terracotta);
+    white-space: nowrap;
+  }
+
+  .compact-desc {
+    font-size: 0.8125rem;
+    color: var(--color-text-muted);
+    line-height: 1.45;
+    margin: 0;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  /* Card specific styles (Menu page / bento grid) */
   .menu-card {
     background-color: var(--color-bg-card);
     border: 1px solid var(--color-border);
@@ -194,7 +336,6 @@ const { item, variant = 'editorial' } = Astro.props;
   }
 
   .menu-card-name {
-    font-family: var(--font-serif);
     font-size: 1.0625rem;
     font-weight: 600;
     color: var(--color-wood);

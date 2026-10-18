@@ -488,7 +488,8 @@ export const menuItems: MenuItem[] = [
     type: 'makanan',
     category: 'menu-utama',
     categoryName: 'Menu Utama',
-    favorite: true
+    favorite: true,
+    image: '/images/menu/bakmi-jowo.jpg'
   },
   {
     id: 'nasi-goreng-special',
@@ -613,7 +614,9 @@ export const menuItems: MenuItem[] = [
     price: 5000,
     type: 'makanan',
     category: 'snack',
-    categoryName: 'Snack'
+    categoryName: 'Snack',
+    favorite: true,
+    image: '/images/menu/tempe-mendoan.jpg'
   },
   {
     id: 'gethuk-goreng',
@@ -626,12 +629,14 @@ export const menuItems: MenuItem[] = [
   },
   {
     id: 'pisang-goreng',
-    name: 'Pisang Goreng',
-    description: 'Pisang goreng manis empuk bertepung garing.',
+    name: 'Pisang Goreng Wijen',
+    description: 'Pisang goreng manis empuk bertepung garing bertabur wijen gurih.',
     price: 7000,
     type: 'makanan',
     category: 'snack',
-    categoryName: 'Snack'
+    categoryName: 'Snack',
+    favorite: true,
+    image: '/images/menu/pisang-goreng-wijen.jpg'
   },
   {
     id: 'sosis-goreng',
