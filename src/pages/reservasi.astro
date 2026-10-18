@@ -1,0 +1,1401 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+
+const KASIR_PHONE = "6281234567890";
+---
+
+<BaseLayout
+  title="Reservasi Meja — Ndalem Kopi"
+  description="Formulir reservasi meja online Ndalem Kopi. Rencanakan kunjungan Anda untuk ngopi, mangan, kumpul keluarga, reuni, atau rapat santai di pendopo."
+>
+  <!-- ===================================================================
+       HEADER RESERVASI
+       =================================================================== -->
+  <section class="reservasi-header" aria-label="Pengantar Reservasi">
+    <div class="container text-center">
+      <div class="header-chip">
+        <span class="chip-dot">✦</span>
+        <span>PAWURATAN & RESERVASI MEJA</span>
+        <span class="chip-dot">✦</span>
+      </div>
+
+      <h1 class="reservasi-title font-serif">Reservasi Meja ing Ndalem Kopi</h1>
+      <p class="reservasi-tagline italic-jawa font-serif">“Papan kanggo mulih, ngaso, lan nglumpuk bebarengan.”</p>
+      <p class="reservasi-intro">
+        Mangga isi formulir reservasi ing ngisor iki supaya pawon lan staf pendopo bisa nyiapake meja paling kepenak lan suguhan anget sadurunge panjenengan rawuh.
+      </p>
+    </div>
+  </section>
+
+  <!-- ===================================================================
+       MAIN RESERVATION SECTION (Form + Live Summary)
+       =================================================================== -->
+  <section class="section section-surface" id="form-reservasi-section">
+    <div class="container">
+      <div class="reservasi-grid">
+        <!-- FORM COLUMN -->
+        <div class="reservasi-form-card">
+          <form id="reservation-form" class="r-form" novalidate>
+            <!-- Step 1: Data Pemesan -->
+            <fieldset class="r-fieldset">
+              <legend class="r-legend font-serif">
+                <span class="r-step-num">1</span>
+                <span>Data Pemesan (Kontak Panjenengan)</span>
+              </legend>
+              <p class="r-field-guide">Nomer WhatsApp digunakake kasir kanggo ngirim konfirmasi kasedhiyan meja.</p>
+
+              <div class="r-row r-row-2">
+                <div class="r-group">
+                  <label for="res-name" class="r-label">
+                    Nama Lengkap <span class="required">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    id="res-name"
+                    name="name"
+                    class="r-input"
+                    placeholder="Contoh: Mas Najib Bahrudin"
+                    required
+                  />
+                  <span class="r-error" id="err-name">Nama lengkap wajib diisi.</span>
+                </div>
+
+                <div class="r-group">
+                  <label for="res-phone" class="r-label">
+                    Nomor WhatsApp Aktif <span class="required">*</span>
+                  </label>
+                  <input
+                    type="tel"
+                    id="res-phone"
+                    name="phone"
+                    class="r-input"
+                    placeholder="Contoh: 081234567890"
+                    required
+                  />
+                  <span class="r-error" id="err-phone">Nomor WhatsApp wajib diisi (minimal 10 digit).</span>
+                </div>
+              </div>
+
+              <div class="r-group">
+                <label for="res-email" class="r-label">
+                  Alamat Email <span class="r-optional">(Opsional, untuk bukti salinan)</span>
+                </label>
+                <input
+                  type="email"
+                  id="res-email"
+                  name="email"
+                  class="r-input"
+                  placeholder="Contoh: nama@domain.com"
+                />
+              </div>
+            </fieldset>
+
+            <!-- Step 2: Waktu & Tanggal Kedatangan -->
+            <fieldset class="r-fieldset">
+              <legend class="r-legend font-serif">
+                <span class="r-step-num">2</span>
+                <span>Waktu & Tanggal Rawuh</span>
+              </legend>
+
+              <div class="r-row r-row-3">
+                <div class="r-group">
+                  <label for="res-date" class="r-label">
+                    Tanggal Kedatangan <span class="required">*</span>
+                  </label>
+                  <input
+                    type="date"
+                    id="res-date"
+                    name="date"
+                    class="r-input"
+                    required
+                  />
+                  <span class="r-error" id="err-date">Pilih tanggal rawuh (minimal dinten niki).</span>
+                </div>
+
+                <div class="r-group">
+                  <label for="res-time" class="r-label">
+                    Jam Kedatangan <span class="required">*</span>
+                  </label>
+                  <input
+                    type="time"
+                    id="res-time"
+                    name="time"
+                    class="r-input"
+                    value="15:30"
+                    required
+                  />
+                  <span class="r-error" id="err-time">Jam rawuh wajib diisi (08.00 - 22.00).</span>
+                </div>
+
+                <div class="r-group">
+                  <label for="res-guests" class="r-label">
+                    Jumlah Tamu / Orang <span class="required">*</span>
+                  </label>
+                  <select id="res-guests" name="guests" class="r-select" required>
+                    <option value="1 - 2 Orang">1 - 2 Orang (Santai / Pasangan / WFC)</option>
+                    <option value="3 - 5 Orang" selected>3 - 5 Orang (Keluarga Kecil / Kanca)</option>
+                    <option value="6 - 10 Orang">6 - 10 Orang (Rombongan Sedang)</option>
+                    <option value="11 - 20 Orang">11 - 20 Orang (Rombongan Trah / Arisan)</option>
+                    <option value="Lebih dari 20 Orang">Lebih dari 20 Orang (Acara Komunitas)</option>
+                  </select>
+                </div>
+              </div>
+            </fieldset>
+
+            <!-- Step 3: Keperluan Acara (User requirement) -->
+            <fieldset class="r-fieldset">
+              <legend class="r-legend font-serif">
+                <span class="r-step-num">3</span>
+                <span>Keperluan Kunjungan / Acara <span class="required">*</span></span>
+              </legend>
+              <p class="r-field-guide">Bantu kami nyiapake tata letak meja sing pas miturut kabutuhan panjenengan.</p>
+
+              <div class="r-purpose-grid">
+                <label class="r-purpose-card">
+                  <input type="radio" name="purpose" value="Ngopi & Mangan Santai" checked />
+                  <div class="r-purpose-body">
+                    <span class="purpose-icon">☕</span>
+                    <span class="purpose-title">Ngopi & Mangan Santai</span>
+                    <span class="purpose-sub">Ngaso, ngobrol akrab, utawa nikmati wektu sore.</span>
+                  </div>
+                </label>
+
+                <label class="r-purpose-card">
+                  <input type="radio" name="purpose" value="Kumpul Keluarga / Arisan" />
+                  <div class="r-purpose-body">
+                    <span class="purpose-icon">👨‍👩‍👧‍👦</span>
+                    <span class="purpose-title">Keluarga & Arisan</span>
+                    <span class="purpose-sub">Silaturahmi keluarga ageng utawa kanca arisan.</span>
+                  </div>
+                </label>
+
+                <label class="r-purpose-card">
+                  <input type="radio" name="purpose" value="Reuni / Kumpul Komunitas" />
+                  <div class="r-purpose-body">
+                    <span class="purpose-icon">🤝</span>
+                    <span class="purpose-title">Reuni & Komunitas</span>
+                    <span class="purpose-sub">Temu kangen alumni, komunitas motor, seni, lsp.</span>
+                  </div>
+                </label>
+
+                <label class="r-purpose-card">
+                  <input type="radio" name="purpose" value="Rapat / Diskusi Kerja / WFC" />
+                  <div class="r-purpose-body">
+                    <span class="purpose-icon">💼</span>
+                    <span class="purpose-title">Rapat / Diskusi Kerja</span>
+                    <span class="purpose-sub">Butuh meja nyaman, colokan listrik, lan hawa tenang.</span>
+                  </div>
+                </label>
+
+                <label class="r-purpose-card">
+                  <input type="radio" name="purpose" value="Ulang Tahun / Syukuran" />
+                  <div class="r-purpose-body">
+                    <span class="purpose-icon">🎂</span>
+                    <span class="purpose-title">Ulang Tahun / Syukuran</span>
+                    <span class="purpose-sub">Peringatan dinten lair utawa selamatan keluarga.</span>
+                  </div>
+                </label>
+
+                <label class="r-purpose-card">
+                  <input type="radio" name="purpose" value="Keperluan Lainnya" />
+                  <div class="r-purpose-body">
+                    <span class="purpose-icon">✦</span>
+                    <span class="purpose-title">Keperluan Liyane</span>
+                    <span class="purpose-sub">Tulis rincian ing kolom catatan panyuwun.</span>
+                  </div>
+                </label>
+              </div>
+            </fieldset>
+
+            <!-- Step 4: Preferensi Area Tempat Duduk -->
+            <fieldset class="r-fieldset">
+              <legend class="r-legend font-serif">
+                <span class="r-step-num">4</span>
+                <span>Pilihan Area Meja & Swasana</span>
+              </legend>
+
+              <div class="r-area-grid">
+                <label class="r-area-card">
+                  <input type="radio" name="area" value="Pendopo Utama (Joglo Kayu)" checked />
+                  <div class="r-area-body">
+                    <span class="area-badge">Favorit</span>
+                    <strong class="area-title font-serif">Pendopo Utama (Joglo)</strong>
+                    <p class="area-desc">Kayu jati klasik, atap joglo dhuwur, adhem ayem sembribit.</p>
+                  </div>
+                </label>
+
+                <label class="r-area-card">
+                  <input type="radio" name="area" value="Taman Plataran (Outdoor)" />
+                  <div class="r-area-body">
+                    <strong class="area-title font-serif">Taman Asri (Outdoor)</strong>
+                    <p class="area-desc">Sesawangan kebun ijo rimbun, seger, santai ing plataran.</p>
+                  </div>
+                </label>
+
+                <label class="r-area-card">
+                  <input type="radio" name="area" value="Lesehan Tradisional" />
+                  <div class="r-area-body">
+                    <strong class="area-title font-serif">Lesehan Jawa</strong>
+                    <p class="area-desc">Meja kayu cendhek beralaskan tikar, luwih guyub lan akrab.</p>
+                  </div>
+                </label>
+
+                <label class="r-area-card">
+                  <input type="radio" name="area" value="Bebas (Pilihan Kasir)" />
+                  <div class="r-area-body">
+                    <strong class="area-title font-serif">Bebas / Pilihan Kasir</strong>
+                    <p class="area-desc">Pilihan meja paling pas lan prayoga nalika rawuh.</p>
+                  </div>
+                </label>
+              </div>
+            </fieldset>
+
+            <!-- Step 5: Pre-order Menu & Catatan Tambahan -->
+            <fieldset class="r-fieldset">
+              <legend class="r-legend font-serif">
+                <span class="r-step-num">5</span>
+                <span>Suguhan Awal & Catatan Khusus</span>
+              </legend>
+
+              <div class="r-group">
+                <label class="r-label">
+                  Suguhan Disiapake Langsung Nalika Rawuh (Opsional):
+                </label>
+                <div class="r-preorder-chips">
+                  <label class="r-chip-toggle">
+                    <input type="checkbox" name="preorder" value="Kopi Ndalem Hangat" />
+                    <span>☕ Kopi Ndalem Hangat</span>
+                  </label>
+                  <label class="r-chip-toggle">
+                    <input type="checkbox" name="preorder" value="Wedang Rempah Komplit" />
+                    <span>🫖 Wedang Rempah Komplit</span>
+                  </label>
+                  <label class="r-chip-toggle">
+                    <input type="checkbox" name="preorder" value="Sego Blendi Ndalem" />
+                    <span>🍲 Sego Blendi Ndalem</span>
+                  </label>
+                  <label class="r-chip-toggle">
+                    <input type="checkbox" name="preorder" value="Bakmi Jowo Goreng" />
+                    <span>🍜 Bakmi Jowo Goreng</span>
+                  </label>
+                  <label class="r-chip-toggle">
+                    <input type="checkbox" name="preorder" value="Pisang Goreng Wijen" />
+                    <span>🍌 Pisang Goreng Wijen</span>
+                  </label>
+                  <label class="r-chip-toggle">
+                    <input type="checkbox" name="preorder" value="Tempe Mendoan Anget" />
+                    <span>🫓 Tempe Mendoan Anget</span>
+                  </label>
+                </div>
+              </div>
+
+              <div class="r-group" style="margin-top:1.25rem;">
+                <label for="res-notes" class="r-label">
+                  Panyuwun Khusus / Catatan Tambahan (Opsional):
+                </label>
+                <textarea
+                  id="res-notes"
+                  name="notes"
+                  rows="3"
+                  class="r-textarea"
+                  placeholder="Contoh: Nyuwun meja sing caket colokan listrik, nyuwun kursi bayi, utawa bawa kue ultah pribadi..."
+                ></textarea>
+              </div>
+            </fieldset>
+
+            <!-- Submit Button -->
+            <div class="r-submit-wrap">
+              <button type="submit" class="btn btn-primary btn-submit-res" id="btn-submit-res">
+                <span>Kirim Formulir Reservasi Meja</span>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M5 12h14M12 5l7 7-7 7"></path>
+                </svg>
+              </button>
+              <p class="r-submit-disclaimer">
+                Formulir iki ora langsung narik biaya. Kasir pawon bakal langsung nampa rincian lan ngonfirmasi kasedhiyan meja panjenengan.
+              </p>
+            </div>
+          </form>
+        </div>
+
+        <!-- RIGHT SIDEBAR: LIVE BOOKING SUMMARY & GUIDELINES -->
+        <aside class="reservasi-sidebar">
+          <div class="r-summary-card">
+            <div class="summary-card-header">
+              <span class="summary-badge">RINGKASAN DATA</span>
+              <h3 class="summary-title font-serif">Rincian Reservasi</h3>
+            </div>
+
+            <div class="summary-divider"></div>
+
+            <div class="summary-rows">
+              <div class="summary-row">
+                <span class="row-label">Nama Pemesan</span>
+                <strong class="row-val" id="sum-name">—</strong>
+              </div>
+
+              <div class="summary-row">
+                <span class="row-label">No. WhatsApp</span>
+                <span class="row-val" id="sum-phone">—</span>
+              </div>
+
+              <div class="summary-row">
+                <span class="row-label">Tanggal Rawuh</span>
+                <strong class="row-val" id="sum-date">—</strong>
+              </div>
+
+              <div class="summary-row">
+                <span class="row-label">Jam Rawuh</span>
+                <span class="row-val" id="sum-time">15:30 WIB</span>
+              </div>
+
+              <div class="summary-row">
+                <span class="row-label">Jumlah Tamu</span>
+                <span class="row-val" id="sum-guests">3 - 5 Orang</span>
+              </div>
+
+              <div class="summary-row">
+                <span class="row-label">Keperluan</span>
+                <strong class="row-val highlight-amber" id="sum-purpose">Ngopi & Mangan Santai</strong>
+              </div>
+
+              <div class="summary-row">
+                <span class="row-label">Pilihan Area</span>
+                <span class="row-val" id="sum-area">Pendopo Utama (Joglo Kayu)</span>
+              </div>
+            </div>
+
+            <div class="summary-status-box">
+              <span class="status-indicator"></span>
+              <span>Siap dikirim menyang Kasir Pawon</span>
+            </div>
+          </div>
+
+          <!-- Guidelines Card -->
+          <div class="r-info-card">
+            <h4 class="info-card-title font-serif">Tata Cara Reservasi Ndalem</h4>
+            <ul class="info-list">
+              <li>
+                <span class="info-icon">⚡</span>
+                <div>
+                  <strong>Konfirmasi Nyata</strong>
+                  <p>Kasir pawon bakal mangsuli konfirmasi kasedhiyan meja paling suwe 15–30 menit.</p>
+                </div>
+              </li>
+              <li>
+                <span class="info-icon">🌿</span>
+                <div>
+                  <strong>Bebas Biaya Booking</strong>
+                  <p>Ora ana biaya dp utawa booking meja kanggone kumpul santai lan keluarga.</p>
+                </div>
+              </li>
+              <li>
+                <span class="info-icon">⏱️</span>
+                <div>
+                  <strong>Toleransi Wektu Rawuh</strong>
+                  <p>Meja disimpen nganti 20 menit sawise jam reservasi sadurunge dibebasake.</p>
+                </div>
+              </li>
+              <li>
+                <span class="info-icon">📞</span>
+                <div>
+                  <strong>Bantuan Langsung Kasir</strong>
+                  <p>Hubungi kasir langsung via WhatsApp ing <strong>+62 812-3456-7890</strong>.</p>
+                </div>
+              </li>
+            </ul>
+          </div>
+        </aside>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================================================================
+       SUCCESS CONFIRMATION MODAL (Rich Voucher & Direct WA Dispatch)
+       =================================================================== -->
+  <div class="res-modal-backdrop" id="res-success-modal" style="display:none;" aria-hidden="true" role="dialog">
+    <div class="res-modal-container">
+      <div class="res-modal-header">
+        <div class="res-modal-badge font-serif">✦ NDALEM KOPI ✦</div>
+        <h2 class="res-modal-title font-serif">Reservasi Kasembadan Dicathet!</h2>
+        <p class="res-modal-sub">Matur nuwun sanget, panjenengan sampun ngisi data reservasi meja kanthi jangkep.</p>
+      </div>
+
+      <div class="res-voucher-card">
+        <div class="voucher-top-bar">
+          <span>BUKTI RESERVASI ONLINE</span>
+          <span class="voucher-id" id="voucher-code">#NDL-8921</span>
+        </div>
+        <div class="voucher-details" id="voucher-details-body">
+          <!-- Filled dynamically via JS -->
+        </div>
+      </div>
+
+      <div class="res-modal-actions">
+        <button type="button" class="btn btn-primary btn-wa-send" id="btn-send-wa">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path>
+          </svg>
+          <span>Kirim Rincian Reservasi menyang WhatsApp Kasir</span>
+        </button>
+
+        <div class="res-modal-secondary-actions">
+          <button type="button" class="btn btn-secondary btn-copy-res" id="btn-copy-res">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+              <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+            </svg>
+            <span id="copy-btn-text">Salin Teks Reservasi</span>
+          </button>
+          
+          <button type="button" class="btn btn-outline" id="btn-close-modal">
+            Tutup
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</BaseLayout>
+
+<script is:inline define:vars={{ KASIR_PHONE }}>
+  document.addEventListener('DOMContentLoaded', () => {
+    const form = document.getElementById('reservation-form');
+    const inputName = document.getElementById('res-name');
+    const inputPhone = document.getElementById('res-phone');
+    const inputDate = document.getElementById('res-date');
+    const inputTime = document.getElementById('res-time');
+    const selectGuests = document.getElementById('res-guests');
+    const inputNotes = document.getElementById('res-notes');
+
+    const sumName = document.getElementById('sum-name');
+    const sumPhone = document.getElementById('sum-phone');
+    const sumDate = document.getElementById('sum-date');
+    const sumTime = document.getElementById('sum-time');
+    const sumGuests = document.getElementById('sum-guests');
+    const sumPurpose = document.getElementById('sum-purpose');
+    const sumArea = document.getElementById('sum-area');
+
+    const modal = document.getElementById('res-success-modal');
+    const voucherDetails = document.getElementById('voucher-details-body');
+    const voucherCode = document.getElementById('voucher-code');
+    const btnSendWa = document.getElementById('btn-send-wa');
+    const btnCopyRes = document.getElementById('btn-copy-res');
+    const copyBtnText = document.getElementById('copy-btn-text');
+    const btnCloseModal = document.getElementById('btn-close-modal');
+
+    // Set default date to today
+    const today = new Date();
+    const yyyy = today.getFullYear();
+    const mm = String(today.getMonth() + 1).padStart(2, '0');
+    const dd = String(today.getDate()).padStart(2, '0');
+    const todayStr = `${yyyy}-${mm}-${dd}`;
+    inputDate.min = todayStr;
+    inputDate.value = todayStr;
+
+    function formatDateDisplay(val) {
+      if (!val) return '—';
+      try {
+        const d = new Date(val + 'T00:00:00');
+        return d.toLocaleDateString('id-ID', {
+          weekday: 'long',
+          day: 'numeric',
+          month: 'long',
+          year: 'numeric'
+        });
+      } catch (e) {
+        return val;
+      }
+    }
+
+    sumDate.textContent = formatDateDisplay(todayStr);
+
+    // Live update helper
+    function getSelectedRadio(name) {
+      const el = document.querySelector(`input[name="${name}"]:checked`);
+      return el ? el.value : '—';
+    }
+
+    function getPreorders() {
+      const checked = document.querySelectorAll('input[name="preorder"]:checked');
+      return Array.from(checked).map(c => c.value);
+    }
+
+    function updateLiveSummary() {
+      sumName.textContent = inputName.value.trim() || '—';
+      sumPhone.textContent = inputPhone.value.trim() || '—';
+      sumDate.textContent = formatDateDisplay(inputDate.value);
+      sumTime.textContent = (inputTime.value ? inputTime.value + ' WIB' : '—');
+      sumGuests.textContent = selectGuests.value;
+      sumPurpose.textContent = getSelectedRadio('purpose');
+      sumArea.textContent = getSelectedRadio('area');
+    }
+
+    inputName.addEventListener('input', updateLiveSummary);
+    inputPhone.addEventListener('input', updateLiveSummary);
+    inputDate.addEventListener('change', updateLiveSummary);
+    inputTime.addEventListener('input', updateLiveSummary);
+    selectGuests.addEventListener('change', updateLiveSummary);
+
+    document.querySelectorAll('input[name="purpose"]').forEach(r => {
+      r.addEventListener('change', updateLiveSummary);
+    });
+
+    document.querySelectorAll('input[name="area"]').forEach(r => {
+      r.addEventListener('change', updateLiveSummary);
+    });
+
+    let currentResData = null;
+
+    // Form submit validation & modal open
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+
+      let valid = true;
+      const name = inputName.value.trim();
+      const phone = inputPhone.value.trim();
+      const date = inputDate.value;
+      const time = inputTime.value;
+      const guests = selectGuests.value;
+      const purpose = getSelectedRadio('purpose');
+      const area = getSelectedRadio('area');
+      const preorders = getPreorders();
+      const notes = inputNotes.value.trim();
+
+      // Validate name
+      if (!name) {
+        document.getElementById('err-name').style.display = 'block';
+        valid = false;
+      } else {
+        document.getElementById('err-name').style.display = 'none';
+      }
+
+      // Validate phone
+      if (!phone || phone.replace(/\D/g, '').length < 9) {
+        document.getElementById('err-phone').style.display = 'block';
+        valid = false;
+      } else {
+        document.getElementById('err-phone').style.display = 'none';
+      }
+
+      // Validate date
+      if (!date) {
+        document.getElementById('err-date').style.display = 'block';
+        valid = false;
+      } else {
+        document.getElementById('err-date').style.display = 'none';
+      }
+
+      // Validate time
+      if (!time) {
+        document.getElementById('err-time').style.display = 'block';
+        valid = false;
+      } else {
+        document.getElementById('err-time').style.display = 'none';
+      }
+
+      if (!valid) {
+        const firstErr = document.querySelector('.r-error[style*="block"]');
+        if (firstErr) {
+          firstErr.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+        return;
+      }
+
+      // Generate Code
+      const randCode = 'NDL-' + Math.floor(1000 + Math.random() * 9000);
+      voucherCode.textContent = `#${randCode}`;
+
+      currentResData = {
+        code: randCode,
+        name,
+        phone,
+        email: document.getElementById('res-email').value.trim() || '-',
+        date: formatDateDisplay(date),
+        rawDate: date,
+        time: time + ' WIB',
+        guests,
+        purpose,
+        area,
+        preorders: preorders.length ? preorders.join(', ') : 'Pesan di tempat pas rawuh',
+        notes: notes || '-',
+        createdAt: new Date().toISOString()
+      };
+
+      // Save to localStorage
+      try {
+        const existing = JSON.parse(localStorage.getItem('ndalem_reservations') || '[]');
+        existing.unshift(currentResData);
+        localStorage.setItem('ndalem_reservations', JSON.stringify(existing.slice(0, 30)));
+      } catch (err) {
+        console.warn('Could not save to localStorage', err);
+      }
+
+      // Render Voucher Details
+      voucherDetails.innerHTML = `
+        <div class="v-grid">
+          <div class="v-item"><span>Nama Pemesan:</span><strong>${currentResData.name}</strong></div>
+          <div class="v-item"><span>No. WhatsApp:</span><strong>${currentResData.phone}</strong></div>
+          <div class="v-item"><span>Tanggal:</span><strong>${currentResData.date}</strong></div>
+          <div class="v-item"><span>Jam Rawuh:</span><strong>${currentResData.time}</strong></div>
+          <div class="v-item"><span>Jumlah Tamu:</span><strong>${currentResData.guests}</strong></div>
+          <div class="v-item"><span>Keperluan:</span><strong class="highlight-amber">${currentResData.purpose}</strong></div>
+          <div class="v-item v-full"><span>Pilihan Area Meja:</span><strong>${currentResData.area}</strong></div>
+          <div class="v-item v-full"><span>Suguhan Disiapake:</span><strong>${currentResData.preorders}</strong></div>
+          ${currentResData.notes !== '-' ? `<div class="v-item v-full"><span>Panyuwun Khusus:</span><em>${currentResData.notes}</em></div>` : ''}
+        </div>
+      `;
+
+      // Open Modal
+      modal.style.display = 'flex';
+      modal.setAttribute('aria-hidden', 'false');
+      document.body.style.overflow = 'hidden';
+    });
+
+    function generateWaText(data) {
+      return `*FORMULIR RESERVASI MEJA — NDALEM KOPI*
+Kode: #${data.code}
+─────────────────────────────
+👤 *Nama Pemesan:* ${data.name}
+📱 *No. WhatsApp:* ${data.phone}
+🗓 *Tanggal Rawuh:* ${data.date}
+⏰ *Jam Rawuh:* ${data.time}
+👥 *Jumlah Tamu:* ${data.guests}
+🎯 *Keperluan:* ${data.purpose}
+📍 *Pilihan Area:* ${data.area}
+☕ *Suguhan Awal:* ${data.preorders}
+📝 *Panyuwun Khusus:* ${data.notes}
+─────────────────────────────
+Sugeng rawuh! Nyuwun tulung kasir Ndalem Kopi paring konfirmasi kasedhiyan meja nggih. Matur nuwun.`;
+    }
+
+    btnSendWa.addEventListener('click', () => {
+      if (!currentResData) return;
+      const text = generateWaText(currentResData);
+      const url = `https://wa.me/${KASIR_PHONE}?text=${encodeURIComponent(text)}`;
+      window.open(url, '_blank');
+    });
+
+    btnCopyRes.addEventListener('click', () => {
+      if (!currentResData) return;
+      const text = generateWaText(currentResData);
+      navigator.clipboard.writeText(text).then(() => {
+        copyBtnText.textContent = 'Teks Kasalin! ✓';
+        setTimeout(() => {
+          copyBtnText.textContent = 'Salin Teks Reservasi';
+        }, 2500);
+      });
+    });
+
+    function closeModal() {
+      modal.style.display = 'none';
+      modal.setAttribute('aria-hidden', 'true');
+      document.body.style.overflow = '';
+    }
+
+    btnCloseModal.addEventListener('click', closeModal);
+    modal.addEventListener('click', (e) => {
+      if (e.target === modal) closeModal();
+    });
+  });
+</script>
+
+<style>
+  /* ==========================================================================
+     RESERVASI PAGE STYLES (Warm Contemporary Javanese)
+     ========================================================================== */
+  .reservasi-header {
+    background: radial-gradient(circle at center, #FFFFFF 0%, var(--color-bg-base) 80%);
+    padding-top: var(--space-12);
+    padding-bottom: var(--space-10);
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .header-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.6875rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    color: var(--color-terracotta);
+    background-color: #F8EDE0;
+    border: 1px solid rgba(184, 93, 25, 0.25);
+    padding: 0.35rem 0.85rem;
+    border-radius: var(--radius-pill);
+    margin-bottom: var(--space-3);
+  }
+
+  .chip-dot {
+    color: var(--color-amber);
+    font-size: 0.625rem;
+  }
+
+  .reservasi-title {
+    font-size: clamp(2.25rem, 4vw, 3rem);
+    font-weight: 700;
+    color: var(--color-wood);
+    margin-bottom: var(--space-2);
+    line-height: 1.2;
+  }
+
+  .reservasi-tagline {
+    font-size: 1.25rem;
+    color: var(--color-terracotta);
+    margin-bottom: var(--space-4);
+  }
+
+  .reservasi-intro {
+    font-size: var(--text-base);
+    color: var(--color-text-muted);
+    max-width: 640px;
+    margin: 0 auto;
+    line-height: 1.65;
+  }
+
+  /* Grid Layout: Form vs Live Summary */
+  .reservasi-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-8);
+    align-items: start;
+  }
+
+  @media (min-width: 960px) {
+    .reservasi-grid {
+      grid-template-columns: 1.4fr 0.85fr;
+      gap: var(--space-10);
+    }
+  }
+
+  /* Form Container Card */
+  .reservasi-form-card {
+    background-color: var(--color-bg-card);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    padding: var(--space-6);
+    box-shadow: 0 4px 16px rgba(40, 29, 23, 0.05);
+  }
+
+  @media (min-width: 640px) {
+    .reservasi-form-card {
+      padding: var(--space-8);
+    }
+  }
+
+  .r-fieldset {
+    border: none;
+    padding: 0;
+    margin: 0 0 var(--space-8) 0;
+    border-bottom: 1px solid var(--color-border-subtle);
+    padding-bottom: var(--space-6);
+  }
+
+  .r-fieldset:last-of-type {
+    border-bottom: none;
+    margin-bottom: var(--space-4);
+  }
+
+  .r-legend {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: var(--color-wood);
+    margin-bottom: 0.5rem;
+    width: 100%;
+  }
+
+  .r-step-num {
+    width: 28px;
+    height: 28px;
+    background-color: var(--color-terracotta);
+    color: #FAF7F2;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--font-sans);
+    font-size: 0.875rem;
+    font-weight: 700;
+    flex-shrink: 0;
+  }
+
+  .r-field-guide {
+    font-size: var(--text-xs);
+    color: var(--color-text-muted);
+    margin-bottom: var(--space-4);
+    line-height: 1.5;
+  }
+
+  .r-row {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-4);
+    margin-bottom: var(--space-4);
+  }
+
+  @media (min-width: 640px) {
+    .r-row-2 {
+      grid-template-columns: repeat(2, 1fr);
+    }
+
+    .r-row-3 {
+      grid-template-columns: 1.2fr 1fr 1.3fr;
+    }
+  }
+
+  .r-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+  }
+
+  .r-label {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--color-wood);
+  }
+
+  .required {
+    color: #DC2626;
+  }
+
+  .r-optional {
+    font-size: var(--text-xs);
+    color: var(--color-text-subtle);
+    font-weight: 400;
+  }
+
+  .r-input,
+  .r-select,
+  .r-textarea {
+    width: 100%;
+    padding: 0.75rem 0.95rem;
+    font-family: var(--font-sans);
+    font-size: var(--text-sm);
+    color: var(--color-wood);
+    background-color: #FFFFFF;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    transition: all var(--transition-fast);
+  }
+
+  .r-input:focus,
+  .r-select:focus,
+  .r-textarea:focus {
+    outline: none;
+    border-color: var(--color-terracotta);
+    box-shadow: 0 0 0 3px rgba(184, 93, 25, 0.15);
+  }
+
+  .r-error {
+    display: none;
+    font-size: 0.75rem;
+    color: #DC2626;
+    margin-top: 0.2rem;
+  }
+
+  /* Purpose Radio Cards */
+  .r-purpose-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-3);
+  }
+
+  @media (min-width: 600px) {
+    .r-purpose-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  .r-purpose-card {
+    position: relative;
+    display: flex;
+    cursor: pointer;
+  }
+
+  .r-purpose-card input {
+    position: absolute;
+    opacity: 0;
+  }
+
+  .r-purpose-body {
+    width: 100%;
+    padding: 0.85rem;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    background-color: var(--color-bg-base);
+    transition: all var(--transition-fast);
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+
+  .purpose-icon {
+    font-size: 1.25rem;
+  }
+
+  .purpose-title {
+    font-weight: 700;
+    font-size: 0.9375rem;
+    color: var(--color-wood);
+  }
+
+  .purpose-sub {
+    font-size: var(--text-xs);
+    color: var(--color-text-muted);
+    line-height: 1.4;
+  }
+
+  .r-purpose-card input:checked + .r-purpose-body {
+    border-color: var(--color-terracotta);
+    background-color: #FDF9F5;
+    box-shadow: 0 0 0 2px rgba(184, 93, 25, 0.25);
+  }
+
+  /* Area Radio Cards */
+  .r-area-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-3);
+  }
+
+  @media (min-width: 600px) {
+    .r-area-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  .r-area-card {
+    position: relative;
+    display: flex;
+    cursor: pointer;
+  }
+
+  .r-area-card input {
+    position: absolute;
+    opacity: 0;
+  }
+
+  .r-area-body {
+    width: 100%;
+    padding: 0.85rem 1rem;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    background-color: var(--color-bg-base);
+    transition: all var(--transition-fast);
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+  }
+
+  .area-badge {
+    align-self: flex-start;
+    font-size: 0.625rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    background-color: #FEE2E2;
+    color: #991B1B;
+    padding: 0.15rem 0.45rem;
+    border-radius: var(--radius-pill);
+  }
+
+  .area-title {
+    font-size: 1.05rem;
+    color: var(--color-wood);
+  }
+
+  .area-desc {
+    font-size: var(--text-xs);
+    color: var(--color-text-muted);
+    line-height: 1.45;
+  }
+
+  .r-area-card input:checked + .r-area-body {
+    border-color: var(--color-terracotta);
+    background-color: #FDF9F5;
+    box-shadow: 0 0 0 2px rgba(184, 93, 25, 0.25);
+  }
+
+  /* Preorder Chips */
+  .r-preorder-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-top: 0.4rem;
+  }
+
+  .r-chip-toggle {
+    cursor: pointer;
+  }
+
+  .r-chip-toggle input {
+    position: absolute;
+    opacity: 0;
+  }
+
+  .r-chip-toggle span {
+    display: inline-block;
+    padding: 0.45rem 0.85rem;
+    font-size: 0.8125rem;
+    font-weight: 600;
+    color: var(--color-wood);
+    background-color: var(--color-bg-base);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-pill);
+    transition: all var(--transition-fast);
+  }
+
+  .r-chip-toggle input:checked + span {
+    background-color: #F8EDE0;
+    border-color: var(--color-terracotta);
+    color: var(--color-terracotta);
+  }
+
+  /* Submit Button Wrap */
+  .r-submit-wrap {
+    padding-top: var(--space-4);
+  }
+
+  .btn-submit-res {
+    width: 100%;
+    padding: 0.95rem 1.5rem;
+    font-size: 1.05rem;
+    border-radius: var(--radius-md);
+    background-color: var(--color-terracotta);
+    border-color: var(--color-terracotta);
+    color: #FFFFFF;
+    box-shadow: 0 4px 14px rgba(184, 93, 25, 0.35);
+  }
+
+  .btn-submit-res:hover {
+    background-color: #A04E12;
+    border-color: #A04E12;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(184, 93, 25, 0.45);
+  }
+
+  .r-submit-disclaimer {
+    font-size: var(--text-xs);
+    color: var(--color-text-subtle);
+    text-align: center;
+    margin-top: var(--space-3);
+    line-height: 1.5;
+  }
+
+  /* ==========================================================================
+     SIDEBAR STYLES (Live Booking Summary)
+     ========================================================================== */
+  .reservasi-sidebar {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-6);
+    position: sticky;
+    top: 5.5rem;
+  }
+
+  .r-summary-card {
+    background-color: var(--color-bg-card);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    padding: var(--space-6);
+    box-shadow: 0 4px 16px rgba(40, 29, 23, 0.05);
+  }
+
+  .summary-badge {
+    font-size: 0.625rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    color: var(--color-terracotta);
+    text-transform: uppercase;
+  }
+
+  .summary-title {
+    font-size: 1.35rem;
+    color: var(--color-wood);
+    margin-top: 0.2rem;
+  }
+
+  .summary-divider {
+    height: 1px;
+    background-color: var(--color-border-subtle);
+    margin: var(--space-4) 0;
+  }
+
+  .summary-rows {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .summary-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 0.75rem;
+    font-size: 0.875rem;
+  }
+
+  .row-label {
+    color: var(--color-text-muted);
+  }
+
+  .row-val {
+    color: var(--color-wood);
+    text-align: right;
+    font-weight: 600;
+  }
+
+  .highlight-amber {
+    color: var(--color-terracotta);
+  }
+
+  .summary-status-box {
+    margin-top: var(--space-5);
+    padding: 0.65rem 0.85rem;
+    background-color: #FDF9F5;
+    border: 1px dashed rgba(184, 93, 25, 0.35);
+    border-radius: var(--radius-md);
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--color-wood);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .status-indicator {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background-color: var(--color-amber);
+    box-shadow: 0 0 6px rgba(197, 139, 53, 0.6);
+  }
+
+  /* Info Card */
+  .r-info-card {
+    background-color: #F8F4EC;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    padding: var(--space-6);
+  }
+
+  .info-card-title {
+    font-size: 1.125rem;
+    color: var(--color-wood);
+    margin-bottom: var(--space-4);
+  }
+
+  .info-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+  }
+
+  .info-list li {
+    display: flex;
+    gap: 0.75rem;
+    align-items: flex-start;
+  }
+
+  .info-icon {
+    font-size: 1.15rem;
+    flex-shrink: 0;
+    line-height: 1;
+    margin-top: 2px;
+  }
+
+  .info-list strong {
+    display: block;
+    font-size: 0.875rem;
+    color: var(--color-wood);
+    margin-bottom: 2px;
+  }
+
+  .info-list p {
+    font-size: var(--text-xs);
+    color: var(--color-text-muted);
+    line-height: 1.5;
+    margin: 0;
+  }
+
+  /* ==========================================================================
+     CONFIRMATION MODAL & VOUCHER
+     ========================================================================== */
+  .res-modal-backdrop {
+    position: fixed;
+    inset: 0;
+    background-color: rgba(24, 17, 12, 0.75);
+    backdrop-filter: blur(6px);
+    z-index: 2000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: var(--space-4);
+    overflow-y: auto;
+  }
+
+  .res-modal-container {
+    background-color: #FFFFFF;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    max-width: 580px;
+    width: 100%;
+    padding: var(--space-6);
+    box-shadow: 0 16px 40px rgba(40, 29, 23, 0.25);
+    margin: auto;
+    animation: modalPop 0.25s ease-out;
+  }
+
+  @keyframes modalPop {
+    from {
+      opacity: 0;
+      transform: scale(0.95) translateY(10px);
+    }
+    to {
+      opacity: 1;
+      transform: scale(1) translateY(0);
+    }
+  }
+
+  .res-modal-header {
+    text-align: center;
+    margin-bottom: var(--space-5);
+  }
+
+  .res-modal-badge {
+    font-size: 0.6875rem;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    color: var(--color-terracotta);
+    margin-bottom: var(--space-2);
+  }
+
+  .res-modal-title {
+    font-size: 1.65rem;
+    font-weight: 700;
+    color: var(--color-wood);
+    margin-bottom: var(--space-2);
+  }
+
+  .res-modal-sub {
+    font-size: var(--text-sm);
+    color: var(--color-text-muted);
+    line-height: 1.5;
+  }
+
+  /* Digital Voucher Card */
+  .res-voucher-card {
+    background-color: var(--color-bg-base);
+    border: 1px dashed var(--color-border);
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    margin-bottom: var(--space-6);
+  }
+
+  .voucher-top-bar {
+    background-color: #F2E8DC;
+    padding: 0.5rem 1rem;
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.6875rem;
+    font-weight: 700;
+    color: var(--color-wood);
+    letter-spacing: 0.06em;
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .voucher-id {
+    color: var(--color-terracotta);
+  }
+
+  .voucher-details {
+    padding: 1rem;
+  }
+
+  .v-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0.6rem;
+    font-size: 0.8125rem;
+  }
+
+  @media (min-width: 500px) {
+    .v-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  .v-item {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .v-item span {
+    font-size: 0.6875rem;
+    color: var(--color-text-muted);
+  }
+
+  .v-item strong {
+    color: var(--color-wood);
+    font-size: 0.875rem;
+  }
+
+  .v-full {
+    grid-column: 1 / -1;
+  }
+
+  /* Modal Buttons */
+  .res-modal-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .btn-wa-send {
+    width: 100%;
+    padding: 0.85rem;
+    font-size: 0.9375rem;
+    background-color: #16A34A;
+    border-color: #16A34A;
+    color: #FFFFFF;
+    border-radius: var(--radius-md);
+    box-shadow: 0 4px 14px rgba(22, 163, 74, 0.3);
+  }
+
+  .btn-wa-send:hover {
+    background-color: #15803D;
+    border-color: #15803D;
+  }
+
+  .res-modal-secondary-actions {
+    display: flex;
+    gap: 0.75rem;
+  }
+
+  .btn-copy-res {
+    flex: 1;
+    font-size: 0.8125rem;
+    padding: 0.65rem;
+    border-radius: var(--radius-md);
+  }
+
+  .btn-outline {
+    background: transparent;
+    border: 1px solid var(--color-border);
+    color: var(--color-text-muted);
+    padding: 0.65rem 1.25rem;
+    border-radius: var(--radius-md);
+    font-size: 0.8125rem;
+  }
+
+  .btn-outline:hover {
+    background-color: var(--color-bg-base);
+    color: var(--color-wood);
+  }
+</style>
