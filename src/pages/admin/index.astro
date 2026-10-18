@@ -2,20 +2,19 @@
 import AdminLayout from '../../layouts/AdminLayout.astro';
 import { menuItems, CATEGORIES } from '../../data/menu';
 
-const SPREADSHEET_URL = "https://docs.google.com/spreadsheets/d/144rFHF79vDRl2n9TMRU9zwWDhRF4czLkoa7hTuJK5GU/edit?usp=sharing";
 const initialMenuJson = JSON.stringify(menuItems);
 const categoriesJson = JSON.stringify(CATEGORIES);
 ---
 
-<AdminLayout title="Dashboard Pawon — Ndalem Kopi" activeNav="dashboard">
+<AdminLayout title="Pawon Admin — Kelola Menu Ndalem Kopi" activeNav="dashboard">
   <!-- ===================================================================
-       1. BENTO GRID SUMMARY CARDS (Rules 20 & 21: Equal Height, Max 3 Lines)
+       1. BENTO GRID SUMMARY CARDS (Focus on Menu Metrics)
        =================================================================== -->
   <div class="ds-kpi-grid" id="dashboard-kpis">
     <!-- Card 1: Total Menu -->
     <div class="ds-kpi-card">
       <div class="ds-kpi-line-1">
-        <span>TOTAL MENU</span>
+        <span>TOTAL MENU TERDAFTAR</span>
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--color-terracotta)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
           <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
           <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
@@ -26,11 +25,11 @@ const categoriesJson = JSON.stringify(CATEGORIES);
       </div>
       <div class="ds-kpi-line-3">
         <span class="ds-badge ds-badge-success">Aktif</span>
-        <span>Terdaftar di sistem Ndalem</span>
+        <span>Menu siap disajikan di Ndalem</span>
       </div>
     </div>
 
-    <!-- Card 2: Minuman (Sheet Tab Minuman) -->
+    <!-- Card 2: Minuman -->
     <div class="ds-kpi-card">
       <div class="ds-kpi-line-1">
         <span>OMBENAN (MINUMAN)</span>
@@ -45,12 +44,12 @@ const categoriesJson = JSON.stringify(CATEGORIES);
         {menuItems.filter(i => i.type === 'minuman').length}
       </div>
       <div class="ds-kpi-line-3">
-        <span class="ds-badge ds-badge-info">Tab 'Minuman'</span>
-        <span>Kopi, wedang, es & jus</span>
+        <span class="ds-badge ds-badge-info">Kopi & Wedangan</span>
+        <span>Seduhan panas, es, jus & herbal</span>
       </div>
     </div>
 
-    <!-- Card 3: Makanan (Sheet Tab Makanan) -->
+    <!-- Card 3: Makanan -->
     <div class="ds-kpi-card">
       <div class="ds-kpi-line-1">
         <span>PANGANAN (MAKANAN)</span>
@@ -63,116 +62,14 @@ const categoriesJson = JSON.stringify(CATEGORIES);
         {menuItems.filter(i => i.type === 'makanan').length}
       </div>
       <div class="ds-kpi-line-3">
-        <span class="ds-badge ds-badge-info">Tab 'Makanan'</span>
+        <span class="ds-badge ds-badge-info">Sajian Pawon</span>
         <span>Sego blendi, serba 10K, snack</span>
-      </div>
-    </div>
-
-    <!-- Card 4: Google Sheet Status -->
-    <div class="ds-kpi-card">
-      <div class="ds-kpi-line-1">
-        <span>DATABASE ENGINE</span>
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#16A34A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <polyline points="20 6 9 17 4 12"></polyline>
-        </svg>
-      </div>
-      <div class="ds-kpi-line-2" style="font-size: 1.35rem; color: #166534;" id="kpi-db-status">
-        Google Sheet
-      </div>
-      <div class="ds-kpi-line-3">
-        <span class="ds-badge ds-badge-success">Ready</span>
-        <span>Sheet ID: 144rFHF79...</span>
       </div>
     </div>
   </div>
 
   <!-- ===================================================================
-       2. GOOGLE SHEET DATABASE PANEL & QUICK SYNC
-       =================================================================== -->
-  <section class="ds-card" id="section-sheets-sync" aria-label="Google Sheet Database Panel">
-    <div class="ds-card-header">
-      <div class="ds-card-title">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--color-terracotta)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
-          <polyline points="14 2 14 8 20 8"></polyline>
-          <line x1="16" y1="13" x2="8" y2="13"></line>
-          <line x1="16" y1="17" x2="8" y2="17"></line>
-        </svg>
-        <span>Database Google Sheet Ndalem Kopi</span>
-      </div>
-
-      <div style="display:flex; gap:0.5rem; flex-wrap:wrap;">
-        <a href={SPREADSHEET_URL} target="_blank" rel="noopener noreferrer" class="btn btn-secondary" style="height:36px; padding:0 0.85rem; font-size:0.8125rem;">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
-            <polyline points="15 3 21 3 21 9"></polyline>
-            <line x1="10" y1="14" x2="21" y2="3"></line>
-          </svg>
-          <span>Buka Google Sheet</span>
-        </a>
-
-        <button type="button" class="btn btn-secondary" id="btn-show-gas-code" style="height:36px; padding:0 0.85rem; font-size:0.8125rem;">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <polyline points="16 18 22 12 16 6"></polyline>
-            <polyline points="8 6 2 12 8 18"></polyline>
-          </svg>
-          <span>Kode Apps Script</span>
-        </button>
-
-        <button type="button" class="btn btn-primary" id="btn-sync-now" style="height:36px; padding:0 1rem; font-size:0.8125rem;">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <polyline points="23 4 23 10 17 10"></polyline>
-            <polyline points="1 20 1 14 7 14"></polyline>
-            <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path>
-          </svg>
-          <span id="sync-btn-label">Sinkronisasi Sekarang</span>
-        </button>
-      </div>
-    </div>
-
-    <div style="background-color:#FAF7F2; border:1px solid var(--ds-border-subtle); border-radius:var(--radius-md); padding:1rem; font-size:0.875rem;">
-      <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:1rem; flex-wrap:wrap;">
-        <div style="max-width:700px;">
-          <div style="font-weight:600; color:var(--color-wood); margin-bottom:4px;">
-            Struktur Multi-Page Tab di Google Sheet:
-          </div>
-          <p style="color:var(--ds-text-secondary); font-size:0.8125rem; line-height:1.5;">
-            Sesuai arahan, data menu otomatis dikelompokkan ke beda page (tab):
-            <strong>Tab "Minuman"</strong> untuk semua menu ombenan, dan <strong>Tab "Makanan"</strong> untuk suguhan pawon. Setiap menu memiliki kolom lengkap: ID, Nama, Kategori, Harga, <strong>Space Foto URL</strong>, Deskripsi, Catatan, dan Status Ketersediaan.
-          </p>
-        </div>
-
-        <div style="display:flex; gap:0.5rem;">
-          <a href="/database/Minuman.csv" download="Ndalem_Kopi_Minuman.csv" class="btn btn-light" style="font-size:0.75rem; height:32px; padding:0 0.65rem;">
-            Unduh CSV Minuman
-          </a>
-          <a href="/database/Makanan.csv" download="Ndalem_Kopi_Makanan.csv" class="btn btn-light" style="font-size:0.75rem; height:32px; padding:0 0.65rem;">
-            Unduh CSV Makanan
-          </a>
-        </div>
-      </div>
-
-      <!-- App Script Web App URL Input Config -->
-      <div style="margin-top:0.75rem; padding-top:0.75rem; border-top:1px dashed var(--ds-border-default); display:flex; align-items:center; gap:0.75rem; flex-wrap:wrap;">
-        <label for="gas-endpoint-url" style="font-size:0.8125rem; font-weight:600; color:var(--color-wood); white-space:nowrap;">
-          Apps Script Web App URL:
-        </label>
-        <input
-          type="url"
-          id="gas-endpoint-url"
-          class="ds-input"
-          placeholder="https://script.google.com/macros/s/AKfycb.../exec (Paste URL setelah deploy)"
-          style="flex:1; min-width:260px; height:36px; font-size:0.8125rem;"
-        />
-        <button type="button" class="btn btn-secondary" id="btn-save-gas-url" style="height:36px; font-size:0.8125rem; padding:0 0.75rem;">
-          Simpan URL
-        </button>
-      </div>
-    </div>
-  </section>
-
-  <!-- ===================================================================
-       3. MANAJEMEN MENU: FILTER & DATA TABLE (Section 50-54 desinsystem.md)
+       2. MANAJEMEN MENU: FILTER & DATA TABLE (Fokus Input Menu)
        =================================================================== -->
   <section class="ds-card" id="section-menu-table" aria-label="Tabel Manajemen Menu">
     <div class="ds-card-header">
@@ -185,23 +82,23 @@ const categoriesJson = JSON.stringify(CATEGORIES);
           <line x1="3" y1="12" x2="3.01" y2="12"></line>
           <line x1="3" y1="18" x2="3.01" y2="18"></line>
         </svg>
-        <span>Daftar Menu Pawon Ndalem</span>
+        <span style="font-family:var(--font-heading); font-size:1.125rem;">Daftar Menu Pawon Ndalem</span>
         <span class="ds-badge ds-badge-neutral" id="table-filtered-badge">Semua Menu</span>
       </div>
 
-      <button type="button" class="btn btn-primary" id="btn-add-menu-main">
+      <button type="button" class="btn btn-primary" id="btn-add-menu-main" onclick="window.openAddModal && window.openAddModal()">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
           <line x1="12" y1="5" x2="12" y2="19"></line>
           <line x1="5" y1="12" x2="19" y2="12"></line>
         </svg>
-        <span>+ Tambah Menu Baru</span>
+        <span>+ Input Menu Baru</span>
       </button>
     </div>
 
-    <!-- Filter & Search Toolbar (Section 92 & 93 desinsystem.md) -->
+    <!-- Filter & Search Toolbar -->
     <div style="display:flex; flex-wrap:wrap; gap:0.75rem; align-items:center; margin-bottom:1rem; justify-content:space-between;">
       <!-- Type Filter Tabs -->
-      <div style="display:flex; gap:0.35rem; background-color:#FAF7F2; padding:3px; border-radius:var(--radius-md); border:1px solid var(--ds-border-default);">
+      <div style="display:flex; gap:0.35rem; background-color:#FAF7F2; padding:4px; border-radius:var(--radius-md); border:1px solid var(--ds-border-default);">
         <button type="button" class="ds-filter-tab active" data-filter-type="all">Semua</button>
         <button type="button" class="ds-filter-tab" data-filter-type="minuman">Ombenan (Minuman)</button>
         <button type="button" class="ds-filter-tab" data-filter-type="makanan">Panganan (Makanan)</button>
@@ -209,7 +106,7 @@ const categoriesJson = JSON.stringify(CATEGORIES);
 
       <div style="display:flex; gap:0.5rem; flex-wrap:wrap; flex:1; max-width:600px; justify-content:flex-end;">
         <!-- Category Filter -->
-        <select id="filter-category" class="ds-select" style="width:180px; height:36px; font-size:0.8125rem;">
+        <select id="filter-category" class="ds-select" style="width:180px; height:38px; font-size:0.8125rem;">
           <option value="all">Semua Kategori</option>
           {CATEGORIES.map(cat => (
             <option value={cat.id}>{cat.name}</option>
@@ -217,7 +114,7 @@ const categoriesJson = JSON.stringify(CATEGORIES);
         </select>
 
         <!-- Status Filter -->
-        <select id="filter-status" class="ds-select" style="width:130px; height:36px; font-size:0.8125rem;">
+        <select id="filter-status" class="ds-select" style="width:130px; height:38px; font-size:0.8125rem;">
           <option value="all">Semua Status</option>
           <option value="Tersedia">Tersedia</option>
           <option value="Habis">Habis</option>
@@ -229,8 +126,8 @@ const categoriesJson = JSON.stringify(CATEGORIES);
             type="text"
             id="search-menu-input"
             class="ds-input"
-            placeholder="Cari menu..."
-            style="height:36px; font-size:0.8125rem; padding-left:2rem;"
+            placeholder="Cari nama menu..."
+            style="height:38px; font-size:0.8125rem; padding-left:2rem;"
           />
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--ds-text-muted)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="position:absolute; left:0.65rem; top:50%; transform:translateY(-50%); pointer-events:none;">
             <circle cx="11" cy="11" r="8"></circle>
@@ -240,18 +137,18 @@ const categoriesJson = JSON.stringify(CATEGORIES);
       </div>
     </div>
 
-    <!-- Data Table (Section 50-54) -->
+    <!-- Data Table -->
     <div class="ds-table-wrapper">
       <table class="ds-table" id="menu-data-table">
         <thead>
           <tr>
-            <th style="width:60px; text-align:center;">FOTO</th>
+            <th style="width:64px; text-align:center;">FOTO</th>
             <th>NAMA MENU</th>
-            <th>TIPE / TAB</th>
+            <th>TIPE</th>
             <th>KATEGORI</th>
             <th style="text-align:right;">HARGA</th>
             <th style="text-align:center;">STATUS</th>
-            <th>LABEL</th>
+            <th>HIGHLIGHT</th>
             <th style="text-align:right; width:140px;">AKSI</th>
           </tr>
         </thead>
@@ -268,7 +165,7 @@ const categoriesJson = JSON.stringify(CATEGORIES);
         <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
       </svg>
       <div style="font-weight:600; color:var(--ds-text-primary); font-size:0.9375rem;">Tidak ada menu yang sesuai</div>
-      <p style="font-size:0.8125rem; margin-top:4px;">Coba ubah kata kunci pencarian atau reset filter kategori.</p>
+      <p style="font-size:0.8125rem; margin-top:4px;">Coba ubah kata kunci pencarian atau reset filter.</p>
     </div>
 
     <!-- Table Footer / Count -->
@@ -276,7 +173,7 @@ const categoriesJson = JSON.stringify(CATEGORIES);
       <div>Menampilkan <strong id="visible-count">0</strong> dari <span id="total-count">0</span> menu</div>
       <div style="display:flex; gap:0.5rem;">
         <button type="button" class="btn btn-secondary" id="btn-export-json" style="height:32px; font-size:0.75rem; padding:0 0.65rem;">
-          Ekspor JSON
+          Ekspor JSON Backup
         </button>
         <button type="button" class="btn btn-secondary" id="btn-reset-default" style="height:32px; font-size:0.75rem; padding:0 0.65rem;">
           Reset Data Awal
@@ -286,12 +183,12 @@ const categoriesJson = JSON.stringify(CATEGORIES);
   </section>
 
   <!-- ===================================================================
-       4. MODAL: INPUT / EDIT MENU (With Dedicated Photo Space)
+       3. MODAL: INPUT / EDIT MENU (With Dedicated Photo Space)
        =================================================================== -->
   <div class="ds-modal-backdrop" id="modal-menu-form" style="display:none;">
     <div class="ds-modal" role="dialog" aria-labelledby="modal-form-title">
       <div class="ds-modal-header">
-        <h3 class="ds-modal-title" id="modal-form-title">Tambah Menu Baru</h3>
+        <h3 class="ds-modal-title" id="modal-form-title">Input Menu Baru</h3>
         <button type="button" class="ds-modal-close" id="btn-close-modal" aria-label="Tutup Dialog">✕</button>
       </div>
 
@@ -302,18 +199,17 @@ const categoriesJson = JSON.stringify(CATEGORIES);
           <!-- Nama Menu -->
           <div class="ds-form-group">
             <label for="form-item-name" class="ds-label ds-label-required">Nama Menu</label>
-            <input type="text" id="form-item-name" class="ds-input" required placeholder="Contoh: Kopi Ndalem / Sego Blendi" />
+            <input type="text" id="form-item-name" class="ds-input" required placeholder="Contoh: Kopi Tubruk Ndalem / Sego Blendi" />
           </div>
 
           <!-- Tipe & Kategori -->
           <div class="ds-form-row">
             <div class="ds-form-group">
-              <label for="form-item-type" class="ds-label ds-label-required">Tipe Menu (Tab Sheet)</label>
+              <label for="form-item-type" class="ds-label ds-label-required">Tipe Menu</label>
               <select id="form-item-type" class="ds-select" required>
                 <option value="minuman">Ombenan (Minuman)</option>
                 <option value="makanan">Panganan (Makanan)</option>
               </select>
-              <div class="ds-helper">Menentukan letak tab di Google Sheet</div>
             </div>
 
             <div class="ds-form-group">
@@ -335,13 +231,13 @@ const categoriesJson = JSON.stringify(CATEGORIES);
             <div class="ds-form-group">
               <label for="form-item-status" class="ds-label">Status Ketersediaan</label>
               <select id="form-item-status" class="ds-select">
-                <option value="Tersedia">Tersedia (Aktif)</option>
+                <option value="Tersedia">Tersedia (Siap Pesan)</option>
                 <option value="Habis">Habis (Kosong)</option>
               </select>
             </div>
           </div>
 
-          <!-- DEDICATED PHOTO SPACE (User Requirement: "space untuk fotonya") -->
+          <!-- DEDICATED PHOTO SPACE -->
           <div class="ds-form-group">
             <label class="ds-label">Foto Menu (Space Foto Terintegrasi)</label>
             <div class="ds-photo-field-wrap">
@@ -364,7 +260,7 @@ const categoriesJson = JSON.stringify(CATEGORIES);
                   type="text"
                   id="form-item-image"
                   class="ds-input"
-                  placeholder="URL Foto (Google Drive, WebP, Unsplash, atau upload file)"
+                  placeholder="URL Foto (Google Drive, WebP, Unsplash, dsb)"
                   style="margin-bottom:6px;"
                 />
 
@@ -375,7 +271,7 @@ const categoriesJson = JSON.stringify(CATEGORIES);
                       <polyline points="17 8 12 3 7 8"></polyline>
                       <line x1="12" y1="3" x2="12" y2="15"></line>
                     </svg>
-                    <span>Pilih Foto dari Komputer</span>
+                    <span>Upload Foto dari Komputer</span>
                     <input type="file" id="form-file-input" accept="image/*" style="display:none;" />
                   </label>
 
@@ -383,7 +279,7 @@ const categoriesJson = JSON.stringify(CATEGORIES);
                     Hapus Foto
                   </button>
                 </div>
-                <div class="ds-helper">Foto akan ditampilkan di halaman menu publik dan data tabel admin.</div>
+                <div class="ds-helper">Foto akan langsung ditampilkan di kartu menu publik & tabel admin.</div>
               </div>
             </div>
           </div>
@@ -391,7 +287,7 @@ const categoriesJson = JSON.stringify(CATEGORIES);
           <!-- Deskripsi Singkat -->
           <div class="ds-form-group">
             <label for="form-item-desc" class="ds-label">Deskripsi Menu</label>
-            <textarea id="form-item-desc" class="ds-textarea" placeholder="Tuliskan rasa khas atau keunikan racikan ini..."></textarea>
+            <textarea id="form-item-desc" class="ds-textarea" placeholder="Tuliskan rasa khas atau keunikan racikan sajian ini..."></textarea>
           </div>
 
           <!-- Catatan / Opsi Pilihan -->
@@ -423,54 +319,7 @@ const categoriesJson = JSON.stringify(CATEGORIES);
   </div>
 
   <!-- ===================================================================
-       5. MODAL: GOOGLE APPS SCRIPT CODE & SETUP GUIDE
-       =================================================================== -->
-  <div class="ds-modal-backdrop" id="modal-gas-code" style="display:none;">
-    <div class="ds-modal" style="max-width:760px;">
-      <div class="ds-modal-header">
-        <h3 class="ds-modal-title">Panduan Google Apps Script Backend</h3>
-        <button type="button" class="ds-modal-close" id="btn-close-gas-modal">✕</button>
-      </div>
-
-      <div class="ds-modal-body">
-        <p style="font-size:0.875rem; color:var(--ds-text-secondary); margin-bottom:1rem; line-height:1.5;">
-          Kode ini menghubungkan Admin Ndalem Kopi dengan Google Sheet Anda secara real-time. Salin kode di bawah, lalu buka Apps Script pada Google Sheet Anda.
-        </p>
-
-        <div style="background-color:#FAF7F2; border:1px solid var(--ds-border-default); border-radius:var(--radius-md); padding:0.85rem; margin-bottom:1rem; font-size:0.8125rem;">
-          <strong style="color:var(--color-wood);">Langkah Pemasangan (1 Menit):</strong>
-          <ol style="margin-left:1.25rem; margin-top:0.35rem; line-height:1.6; list-style-type:decimal;">
-            <li>Buka Sheet: <a href={SPREADSHEET_URL} target="_blank" style="color:var(--color-terracotta); text-decoration:underline;">Ndalem Coffee Spreadsheet</a></li>
-            <li>Klik menu <strong>Extensions (Ekstensi) &gt; Apps Script</strong></li>
-            <li>Hapus isi bawaan, lalu <strong>Paste (Tempel)</strong> kode di bawah</li>
-            <li>Klik <strong>Deploy (Terapkan) &gt; New deployment</strong></li>
-            <li>Pilih tipe <strong>Web app</strong>, atur <em>Who has access</em> ke <strong>"Anyone"</strong></li>
-            <li>Salin URL Web App dan tempelkan ke kolom URL Apps Script di dashboard ini!</li>
-          </ol>
-        </div>
-
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.35rem;">
-          <span style="font-size:0.75rem; font-weight:600; color:var(--ds-text-secondary); text-transform:uppercase;">Kode JavaScript (google-apps-script.js)</span>
-          <button type="button" class="btn btn-secondary" id="btn-copy-gas-code" style="height:28px; font-size:0.75rem; padding:0 0.5rem;">
-            Salin Seluruh Kode
-          </button>
-        </div>
-
-        <textarea
-          id="gas-code-textarea"
-          readonly
-          style="width:100%; height:240px; font-family:monospace; font-size:0.75rem; padding:0.75rem; border-radius:var(--radius-md); border:1px solid var(--ds-border-strong); background-color:#1E130D; color:#FAF7F2; resize:vertical;"
-        ></textarea>
-      </div>
-
-      <div class="ds-modal-footer">
-        <button type="button" class="btn btn-primary" id="btn-done-gas-modal">Selesai</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- ===================================================================
-       6. MODAL: KONFIRMASI HAPUS (Rule 94 desinsystem.md)
+       4. MODAL: KONFIRMASI HAPUS
        =================================================================== -->
   <div class="ds-modal-backdrop" id="modal-delete-confirm" style="display:none;">
     <div class="ds-modal" style="max-width:440px;">
@@ -480,10 +329,7 @@ const categoriesJson = JSON.stringify(CATEGORIES);
       </div>
       <div class="ds-modal-body">
         <p style="font-size:0.875rem; color:var(--ds-text-primary);" id="delete-confirm-text">
-          Apakah Anda yakin ingin menghapus menu ini dari database?
-        </p>
-        <p style="font-size:0.75rem; color:var(--ds-text-muted); margin-top:0.5rem;">
-          Tindakan ini akan menghapus data pada sistem lokal dan mengirim instruksi hapus ke Google Sheet.
+          Apakah Anda yakin ingin menghapus menu ini?
         </p>
       </div>
       <div class="ds-modal-footer">
@@ -493,7 +339,7 @@ const categoriesJson = JSON.stringify(CATEGORIES);
     </div>
   </div>
 
-  <!-- Toast Notification Bar (Section 60 Flash message) -->
+  <!-- Toast Notification Bar -->
   <div id="ds-toast" style="position:fixed; bottom:1.5rem; right:1.5rem; background-color:var(--color-wood); color:#FAF7F2; padding:0.75rem 1.25rem; border-radius:var(--radius-md); font-size:0.875rem; display:none; align-items:center; gap:0.5rem; z-index:2000; box-shadow:0 10px 25px rgba(40,29,23,0.25);">
     <span id="toast-message">Pesan sukses</span>
   </div>
@@ -544,10 +390,9 @@ const categoriesJson = JSON.stringify(CATEGORIES);
     }
   </style>
 
-  <!-- Client JavaScript for Full Admin Capabilities -->
+  <!-- Client JavaScript for Admin Menu Management -->
   <script is:inline define:vars={{ initialMenuJson, categoriesJson }}>
     const STORAGE_KEY = 'ndalem_kopi_menu_items';
-    const GAS_URL_KEY = 'ndalem_kopi_gas_url';
 
     const defaultItems = JSON.parse(initialMenuJson);
     const categories = JSON.parse(categoriesJson);
@@ -679,7 +524,7 @@ const categoriesJson = JSON.stringify(CATEGORIES);
         if (item.favorite) badges += '<span class="ds-badge ds-badge-info">Favorit</span>';
         if (!badges) badges = '<span style="color:var(--ds-text-muted); font-size:0.75rem;">—</span>';
 
-        // Photo slot render (thumbnail or empty placeholder)
+        // Photo slot render
         const photoCol = item.image 
           ? `<img src="${item.image}" alt="${item.name}" class="ds-table-thumb" loading="lazy" />`
           : `<div class="ds-table-thumb-empty" title="Belum ada foto">
@@ -692,13 +537,13 @@ const categoriesJson = JSON.stringify(CATEGORIES);
           <tr data-id="${item.id}">
             <td style="text-align:center;">${photoCol}</td>
             <td>
-              <div style="font-weight:600; color:var(--color-wood);">${item.name}</div>
+              <div style="font-weight:600; color:var(--color-wood); font-size:0.9375rem;">${item.name}</div>
               ${item.notes ? `<div style="font-size:0.75rem; color:var(--color-amber);">${item.notes}</div>` : ''}
-              ${item.description ? `<div style="font-size:0.75rem; color:var(--ds-text-muted); max-width:260px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${item.description}</div>` : ''}
+              ${item.description ? `<div style="font-size:0.75rem; color:var(--ds-text-muted); max-width:280px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${item.description}</div>` : ''}
             </td>
             <td>${typeBadge}</td>
             <td style="font-size:0.8125rem; color:var(--ds-text-secondary);">${item.categoryName || item.category || '—'}</td>
-            <td style="text-align:right; font-weight:700; color:var(--color-wood);">${formatRupiah(item.price)}</td>
+            <td style="text-align:right; font-weight:700; color:var(--color-wood); font-size:0.9375rem;">${formatRupiah(item.price)}</td>
             <td style="text-align:center;">${statusBadge}</td>
             <td>${badges}</td>
             <td style="text-align:right; white-space:nowrap;">
@@ -719,12 +564,11 @@ const categoriesJson = JSON.stringify(CATEGORIES);
         items[idx].status = items[idx].status === 'Habis' ? 'Tersedia' : 'Habis';
         saveItemsLocal();
         renderTable();
-        showToast(`Status '${items[idx].name}' diubah menjadi ${items[idx].status}`);
-        syncSingleItemToGas(items[idx], 'update');
+        showToast(`Status "${items[idx].name}" diubah: ${items[idx].status}`);
       }
     };
 
-    // Populate Category Dropdown inside modal based on Type
+    // Populate Category Dropdown based on Type
     function updateCategoryDropdown(selectedType, currentCatId = '') {
       const select = document.getElementById('form-item-category');
       if (!select) return;
@@ -757,7 +601,7 @@ const categoriesJson = JSON.stringify(CATEGORIES);
 
     // Open Add Menu Modal
     function openAddModal() {
-      document.getElementById('modal-form-title').textContent = 'Tambah Menu Baru';
+      document.getElementById('modal-form-title').textContent = 'Input Menu Baru';
       document.getElementById('form-item-id').value = '';
       document.getElementById('form-item-name').value = '';
       document.getElementById('form-item-type').value = 'minuman';
@@ -774,6 +618,7 @@ const categoriesJson = JSON.stringify(CATEGORIES);
 
       document.getElementById('modal-menu-form').style.display = 'flex';
     }
+    window.openAddModal = openAddModal;
 
     // Open Edit Menu Modal
     window.editMenuItem = function(id) {
@@ -806,46 +651,14 @@ const categoriesJson = JSON.stringify(CATEGORIES);
       pendingDeleteId = id;
       const textEl = document.getElementById('delete-confirm-text');
       if (textEl) {
-        textEl.innerHTML = `Apakah Anda yakin ingin menghapus <strong>"${item.name}"</strong> dari menu?`;
+        textEl.innerHTML = `Apakah Anda yakin ingin menghapus <strong>"${item.name}"</strong> dari daftar menu?`;
       }
       document.getElementById('modal-delete-confirm').style.display = 'flex';
     };
 
-    // Sync to Google Apps Script
-    async function syncSingleItemToGas(item, action) {
-      const gasUrl = (localStorage.getItem(GAS_URL_KEY) || '').trim();
-      if (!gasUrl) return; // Silent if no URL yet
-
-      try {
-        await fetch(gasUrl, {
-          method: 'POST',
-          mode: 'no-cors',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ action: action, item: item })
-        });
-        console.log(`Berhasil kirim action ${action} ke Google Sheet`);
-      } catch (err) {
-        console.warn('Gagal POST ke Google Apps Script', err);
-      }
-    }
-
     // Setup Event Listeners
     document.addEventListener('DOMContentLoaded', () => {
       loadItems();
-
-      // Load saved GAS URL
-      const savedGasUrl = localStorage.getItem(GAS_URL_KEY) || '';
-      const gasUrlInput = document.getElementById('gas-endpoint-url');
-      if (gasUrlInput && savedGasUrl) {
-        gasUrlInput.value = savedGasUrl;
-      }
-
-      // Save GAS URL button
-      document.getElementById('btn-save-gas-url')?.addEventListener('click', () => {
-        const val = (gasUrlInput?.value || '').trim();
-        localStorage.setItem(GAS_URL_KEY, val);
-        showToast('URL Google Apps Script berhasil disimpan!');
-      });
 
       // Type tabs filter
       document.querySelectorAll('.ds-filter-tab').forEach(tab => {
@@ -854,7 +667,7 @@ const categoriesJson = JSON.stringify(CATEGORIES);
           tab.classList.add('active');
           activeTypeFilter = tab.dataset.filterType || 'all';
 
-          // Update Category dropdown in filter toolbar
+          // Update Category dropdown
           const catSelect = document.getElementById('filter-category');
           if (catSelect) {
             catSelect.innerHTML = '<option value="all">Semua Kategori</option>';
@@ -872,7 +685,7 @@ const categoriesJson = JSON.stringify(CATEGORIES);
 
           const badgeEl = document.getElementById('table-filtered-badge');
           if (badgeEl) {
-            badgeEl.textContent = activeTypeFilter === 'all' ? 'Semua Menu' : (activeTypeFilter === 'minuman' ? 'Ombenan (Sheet Minuman)' : 'Panganan (Sheet Makanan)');
+            badgeEl.textContent = activeTypeFilter === 'all' ? 'Semua Menu' : (activeTypeFilter === 'minuman' ? 'Ombenan (Minuman)' : 'Panganan (Makanan)');
           }
 
           renderTable();
@@ -898,6 +711,7 @@ const categoriesJson = JSON.stringify(CATEGORIES);
       // Add Menu Buttons
       document.getElementById('btn-add-menu-topbar')?.addEventListener('click', openAddModal);
       document.getElementById('btn-add-menu-main')?.addEventListener('click', openAddModal);
+      document.getElementById('nav-btn-add-menu')?.addEventListener('click', openAddModal);
 
       // Close Modal Form
       const closeModal = () => {
@@ -988,7 +802,6 @@ const categoriesJson = JSON.stringify(CATEGORIES);
             updateKpis();
             closeModal();
             showToast(`Menu "${name}" berhasil diperbarui!`);
-            syncSingleItemToGas(items[idx], 'update');
           }
         } else {
           // Create New
@@ -1014,7 +827,6 @@ const categoriesJson = JSON.stringify(CATEGORIES);
           updateKpis();
           closeModal();
           showToast(`Menu "${name}" berhasil ditambahkan!`);
-          syncSingleItemToGas(newItem, 'create');
         }
       });
 
@@ -1036,74 +848,6 @@ const categoriesJson = JSON.stringify(CATEGORIES);
         closeDeleteModal();
         if (target) {
           showToast(`Menu "${target.name}" berhasil dihapus`);
-          syncSingleItemToGas({ id: target.id, type: target.type }, 'delete');
-        }
-      });
-
-      // Google Apps Script Modal
-      const gasModal = document.getElementById('modal-gas-code');
-      const gasTextarea = document.getElementById('gas-code-textarea');
-      
-      const loadGasCode = async () => {
-        if (!gasTextarea.value) {
-          try {
-            const res = await fetch('/google-apps-script.js');
-            if (res.ok) {
-              gasTextarea.value = await res.text();
-            }
-          } catch (e) {
-            gasTextarea.value = '// Buka file google-apps-script.js pada repositori ini';
-          }
-        }
-      };
-
-      const openGasModal = async () => {
-        await loadGasCode();
-        if (gasModal) gasModal.style.display = 'flex';
-      };
-
-      document.getElementById('btn-show-gas-code')?.addEventListener('click', openGasModal);
-      document.getElementById('btn-open-sync-modal')?.addEventListener('click', openGasModal);
-      document.getElementById('btn-close-gas-modal')?.addEventListener('click', () => {
-        if (gasModal) gasModal.style.display = 'none';
-      });
-      document.getElementById('btn-done-gas-modal')?.addEventListener('click', () => {
-        if (gasModal) gasModal.style.display = 'none';
-      });
-
-      // Copy GAS code
-      document.getElementById('btn-copy-gas-code')?.addEventListener('click', () => {
-        if (gasTextarea) {
-          gasTextarea.select();
-          navigator.clipboard.writeText(gasTextarea.value).then(() => {
-            showToast('Kode Apps Script berhasil disalin ke clipboard!');
-          });
-        }
-      });
-
-      // Sync All Now Button
-      document.getElementById('btn-sync-now')?.addEventListener('click', async () => {
-        const gasUrl = (localStorage.getItem(GAS_URL_KEY) || '').trim();
-        const label = document.getElementById('sync-btn-label');
-        if (!gasUrl) {
-          openGasModal();
-          showToast('Masukkan URL Apps Script Web App terlebih dahulu', true);
-          return;
-        }
-
-        if (label) label.textContent = 'Menyinkronkan...';
-        try {
-          await fetch(gasUrl, {
-            method: 'POST',
-            mode: 'no-cors',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ action: 'sync_all', items: items })
-          });
-          showToast('Permintaan sinkronisasi seluruh menu telah dikirim ke Google Sheet!');
-        } catch (e) {
-          showToast('Gagal sinkronisasi: ' + e.message, true);
-        } finally {
-          if (label) label.textContent = 'Sinkronisasi Sekarang';
         }
       });
 
@@ -1121,7 +865,7 @@ const categoriesJson = JSON.stringify(CATEGORIES);
 
       // Reset to default
       document.getElementById('btn-reset-default')?.addEventListener('click', () => {
-        if (confirm('Kembalikan seluruh data menu ke bawaan awal Ndalem Kopi? Perubahan kustom yang belum tersimpan ke sheet akan ditimpa.')) {
+        if (confirm('Kembalikan seluruh data menu ke bawaan awal Ndalem Kopi?')) {
           items = [...defaultItems];
           saveItemsLocal();
           renderTable();

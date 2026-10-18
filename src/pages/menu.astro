@@ -19,24 +19,14 @@ const foodCategories = CATEGORIES.filter((c) => c.type === 'makanan');
         Suguhan kanggo ngancani critamu. Saka kopi tubruk, wedangan rempah, tekan lawuh sego jawa.
       </p>
 
-      <!-- Filter Tabs -->
+      <!-- Filter Tabs: 2 Pilihan Utama Sesuai Arahan -->
       <div class="filter-bar" role="tablist" aria-label="Filter Tipe Menu">
         <button
           type="button"
           class="filter-btn active"
-          data-filter="all"
-          role="tab"
-          aria-selected="true"
-          id="tab-all"
-        >
-          Kabeh (Semua)
-        </button>
-        <button
-          type="button"
-          class="filter-btn"
           data-filter="minuman"
           role="tab"
-          aria-selected="false"
+          aria-selected="true"
           id="tab-minuman"
         >
           Ombenan (Minuman)
@@ -99,9 +89,9 @@ const foodCategories = CATEGORIES.filter((c) => c.type === 'makanan');
       </div>
 
       <!-- ===================================================================
-           PANGANAN (MAKANAN) SECTION
+           PANGANAN (MAKANAN) SECTION (Hidden by default, shown when tab Panganan clicked)
            =================================================================== -->
-      <div class="menu-type-block" id="section-makanan" data-menu-type="makanan">
+      <div class="menu-type-block" id="section-makanan" data-menu-type="makanan" style="display: none;">
         <div class="type-header text-center">
           <div class="type-header-content">
             <span class="eyebrow">SAJIAN PAWON</span>
@@ -304,10 +294,11 @@ const foodCategories = CATEGORIES.filter((c) => c.type === 'makanan');
   }
 
   function setupMenuFilter() {
-    const filterButtons = document.querySelectorAll<HTMLButtonElement>('.filter-btn');
-    const typeBlocks = document.querySelectorAll<HTMLElement>('.menu-type-block');
+    const filterButtons = document.querySelectorAll('.filter-btn');
+    const blockMinuman = document.getElementById('section-minuman');
+    const blockMakanan = document.getElementById('section-makanan');
 
-    if (!filterButtons.length || !typeBlocks.length) return;
+    if (!filterButtons.length) return;
 
     filterButtons.forEach((btn) => {
       btn.addEventListener('click', () => {
@@ -321,15 +312,20 @@ const foodCategories = CATEGORIES.filter((c) => c.type === 'makanan');
         btn.classList.add('active');
         btn.setAttribute('aria-selected', 'true');
 
-        // Filter type blocks
-        typeBlocks.forEach((block) => {
-          const blockType = block.getAttribute('data-menu-type');
-          if (filterValue === 'all' || filterValue === blockType) {
-            block.classList.remove('hidden-type');
-          } else {
-            block.classList.add('hidden-type');
-          }
-        });
+        // Show ONLY the selected type block, hide the other
+        if (filterValue === 'makanan') {
+          if (blockMinuman) blockMinuman.style.display = 'none';
+          if (blockMakanan) blockMakanan.style.display = 'block';
+        } else {
+          if (blockMinuman) blockMinuman.style.display = 'block';
+          if (blockMakanan) blockMakanan.style.display = 'none';
+        }
+
+        // Scroll smoothly to top of menu content
+        const contentSection = document.querySelector('.menu-content-section');
+        if (contentSection) {
+          contentSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
       });
     });
   }
