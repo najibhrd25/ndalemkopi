@@ -1,0 +1,1134 @@
+---
+import AdminLayout from '../../layouts/AdminLayout.astro';
+import { menuItems, CATEGORIES } from '../../data/menu';
+
+const SPREADSHEET_URL = "https://docs.google.com/spreadsheets/d/144rFHF79vDRl2n9TMRU9zwWDhRF4czLkoa7hTuJK5GU/edit?usp=sharing";
+const initialMenuJson = JSON.stringify(menuItems);
+const categoriesJson = JSON.stringify(CATEGORIES);
+---
+
+<AdminLayout title="Dashboard Pawon — Ndalem Kopi" activeNav="dashboard">
+  <!-- ===================================================================
+       1. BENTO GRID SUMMARY CARDS (Rules 20 & 21: Equal Height, Max 3 Lines)
+       =================================================================== -->
+  <div class="ds-kpi-grid" id="dashboard-kpis">
+    <!-- Card 1: Total Menu -->
+    <div class="ds-kpi-card">
+      <div class="ds-kpi-line-1">
+        <span>TOTAL MENU</span>
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--color-terracotta)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+          <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+        </svg>
+      </div>
+      <div class="ds-kpi-line-2" id="kpi-total-count">
+        {menuItems.length}
+      </div>
+      <div class="ds-kpi-line-3">
+        <span class="ds-badge ds-badge-success">Aktif</span>
+        <span>Terdaftar di sistem Ndalem</span>
+      </div>
+    </div>
+
+    <!-- Card 2: Minuman (Sheet Tab Minuman) -->
+    <div class="ds-kpi-card">
+      <div class="ds-kpi-line-1">
+        <span>OMBENAN (MINUMAN)</span>
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--color-terracotta)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M18 8h1a4 4 0 0 1 0 8h-1"></path>
+          <path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"></path>
+          <line x1="6" y1="1" x2="6" y2="4"></line>
+          <line x1="10" y1="1" x2="10" y2="4"></line>
+        </svg>
+      </div>
+      <div class="ds-kpi-line-2" id="kpi-minuman-count">
+        {menuItems.filter(i => i.type === 'minuman').length}
+      </div>
+      <div class="ds-kpi-line-3">
+        <span class="ds-badge ds-badge-info">Tab 'Minuman'</span>
+        <span>Kopi, wedang, es & jus</span>
+      </div>
+    </div>
+
+    <!-- Card 3: Makanan (Sheet Tab Makanan) -->
+    <div class="ds-kpi-card">
+      <div class="ds-kpi-line-1">
+        <span>PANGANAN (MAKANAN)</span>
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--color-terracotta)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 2a10 10 0 0 0-10 10c0 5.523 4.477 10 10 10s10-4.477 10-10A10 10 0 0 0 12 2z"></path>
+          <path d="M8 14s1.5 2 4 2 4-2 4-2"></path>
+        </svg>
+      </div>
+      <div class="ds-kpi-line-2" id="kpi-makanan-count">
+        {menuItems.filter(i => i.type === 'makanan').length}
+      </div>
+      <div class="ds-kpi-line-3">
+        <span class="ds-badge ds-badge-info">Tab 'Makanan'</span>
+        <span>Sego blendi, serba 10K, snack</span>
+      </div>
+    </div>
+
+    <!-- Card 4: Google Sheet Status -->
+    <div class="ds-kpi-card">
+      <div class="ds-kpi-line-1">
+        <span>DATABASE ENGINE</span>
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#16A34A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="20 6 9 17 4 12"></polyline>
+        </svg>
+      </div>
+      <div class="ds-kpi-line-2" style="font-size: 1.35rem; color: #166534;" id="kpi-db-status">
+        Google Sheet
+      </div>
+      <div class="ds-kpi-line-3">
+        <span class="ds-badge ds-badge-success">Ready</span>
+        <span>Sheet ID: 144rFHF79...</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================================================================
+       2. GOOGLE SHEET DATABASE PANEL & QUICK SYNC
+       =================================================================== -->
+  <section class="ds-card" id="section-sheets-sync" aria-label="Google Sheet Database Panel">
+    <div class="ds-card-header">
+      <div class="ds-card-title">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--color-terracotta)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+          <polyline points="14 2 14 8 20 8"></polyline>
+          <line x1="16" y1="13" x2="8" y2="13"></line>
+          <line x1="16" y1="17" x2="8" y2="17"></line>
+        </svg>
+        <span>Database Google Sheet Ndalem Kopi</span>
+      </div>
+
+      <div style="display:flex; gap:0.5rem; flex-wrap:wrap;">
+        <a href={SPREADSHEET_URL} target="_blank" rel="noopener noreferrer" class="btn btn-secondary" style="height:36px; padding:0 0.85rem; font-size:0.8125rem;">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+            <polyline points="15 3 21 3 21 9"></polyline>
+            <line x1="10" y1="14" x2="21" y2="3"></line>
+          </svg>
+          <span>Buka Google Sheet</span>
+        </a>
+
+        <button type="button" class="btn btn-secondary" id="btn-show-gas-code" style="height:36px; padding:0 0.85rem; font-size:0.8125rem;">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="16 18 22 12 16 6"></polyline>
+            <polyline points="8 6 2 12 8 18"></polyline>
+          </svg>
+          <span>Kode Apps Script</span>
+        </button>
+
+        <button type="button" class="btn btn-primary" id="btn-sync-now" style="height:36px; padding:0 1rem; font-size:0.8125rem;">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="23 4 23 10 17 10"></polyline>
+            <polyline points="1 20 1 14 7 14"></polyline>
+            <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path>
+          </svg>
+          <span id="sync-btn-label">Sinkronisasi Sekarang</span>
+        </button>
+      </div>
+    </div>
+
+    <div style="background-color:#FAF7F2; border:1px solid var(--ds-border-subtle); border-radius:var(--radius-md); padding:1rem; font-size:0.875rem;">
+      <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:1rem; flex-wrap:wrap;">
+        <div style="max-width:700px;">
+          <div style="font-weight:600; color:var(--color-wood); margin-bottom:4px;">
+            Struktur Multi-Page Tab di Google Sheet:
+          </div>
+          <p style="color:var(--ds-text-secondary); font-size:0.8125rem; line-height:1.5;">
+            Sesuai arahan, data menu otomatis dikelompokkan ke beda page (tab):
+            <strong>Tab "Minuman"</strong> untuk semua menu ombenan, dan <strong>Tab "Makanan"</strong> untuk suguhan pawon. Setiap menu memiliki kolom lengkap: ID, Nama, Kategori, Harga, <strong>Space Foto URL</strong>, Deskripsi, Catatan, dan Status Ketersediaan.
+          </p>
+        </div>
+
+        <div style="display:flex; gap:0.5rem;">
+          <a href="/database/Minuman.csv" download="Ndalem_Kopi_Minuman.csv" class="btn btn-light" style="font-size:0.75rem; height:32px; padding:0 0.65rem;">
+            Unduh CSV Minuman
+          </a>
+          <a href="/database/Makanan.csv" download="Ndalem_Kopi_Makanan.csv" class="btn btn-light" style="font-size:0.75rem; height:32px; padding:0 0.65rem;">
+            Unduh CSV Makanan
+          </a>
+        </div>
+      </div>
+
+      <!-- App Script Web App URL Input Config -->
+      <div style="margin-top:0.75rem; padding-top:0.75rem; border-top:1px dashed var(--ds-border-default); display:flex; align-items:center; gap:0.75rem; flex-wrap:wrap;">
+        <label for="gas-endpoint-url" style="font-size:0.8125rem; font-weight:600; color:var(--color-wood); white-space:nowrap;">
+          Apps Script Web App URL:
+        </label>
+        <input
+          type="url"
+          id="gas-endpoint-url"
+          class="ds-input"
+          placeholder="https://script.google.com/macros/s/AKfycb.../exec (Paste URL setelah deploy)"
+          style="flex:1; min-width:260px; height:36px; font-size:0.8125rem;"
+        />
+        <button type="button" class="btn btn-secondary" id="btn-save-gas-url" style="height:36px; font-size:0.8125rem; padding:0 0.75rem;">
+          Simpan URL
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================================================================
+       3. MANAJEMEN MENU: FILTER & DATA TABLE (Section 50-54 desinsystem.md)
+       =================================================================== -->
+  <section class="ds-card" id="section-menu-table" aria-label="Tabel Manajemen Menu">
+    <div class="ds-card-header">
+      <div class="ds-card-title">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--color-terracotta)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="8" y1="6" x2="21" y2="6"></line>
+          <line x1="8" y1="12" x2="21" y2="12"></line>
+          <line x1="8" y1="18" x2="21" y2="18"></line>
+          <line x1="3" y1="6" x2="3.01" y2="6"></line>
+          <line x1="3" y1="12" x2="3.01" y2="12"></line>
+          <line x1="3" y1="18" x2="3.01" y2="18"></line>
+        </svg>
+        <span>Daftar Menu Pawon Ndalem</span>
+        <span class="ds-badge ds-badge-neutral" id="table-filtered-badge">Semua Menu</span>
+      </div>
+
+      <button type="button" class="btn btn-primary" id="btn-add-menu-main">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="12" y1="5" x2="12" y2="19"></line>
+          <line x1="5" y1="12" x2="19" y2="12"></line>
+        </svg>
+        <span>+ Tambah Menu Baru</span>
+      </button>
+    </div>
+
+    <!-- Filter & Search Toolbar (Section 92 & 93 desinsystem.md) -->
+    <div style="display:flex; flex-wrap:wrap; gap:0.75rem; align-items:center; margin-bottom:1rem; justify-content:space-between;">
+      <!-- Type Filter Tabs -->
+      <div style="display:flex; gap:0.35rem; background-color:#FAF7F2; padding:3px; border-radius:var(--radius-md); border:1px solid var(--ds-border-default);">
+        <button type="button" class="ds-filter-tab active" data-filter-type="all">Semua</button>
+        <button type="button" class="ds-filter-tab" data-filter-type="minuman">Ombenan (Minuman)</button>
+        <button type="button" class="ds-filter-tab" data-filter-type="makanan">Panganan (Makanan)</button>
+      </div>
+
+      <div style="display:flex; gap:0.5rem; flex-wrap:wrap; flex:1; max-width:600px; justify-content:flex-end;">
+        <!-- Category Filter -->
+        <select id="filter-category" class="ds-select" style="width:180px; height:36px; font-size:0.8125rem;">
+          <option value="all">Semua Kategori</option>
+          {CATEGORIES.map(cat => (
+            <option value={cat.id}>{cat.name}</option>
+          ))}
+        </select>
+
+        <!-- Status Filter -->
+        <select id="filter-status" class="ds-select" style="width:130px; height:36px; font-size:0.8125rem;">
+          <option value="all">Semua Status</option>
+          <option value="Tersedia">Tersedia</option>
+          <option value="Habis">Habis</option>
+        </select>
+
+        <!-- Search Bar -->
+        <div style="position:relative; width:200px;">
+          <input
+            type="text"
+            id="search-menu-input"
+            class="ds-input"
+            placeholder="Cari menu..."
+            style="height:36px; font-size:0.8125rem; padding-left:2rem;"
+          />
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--ds-text-muted)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="position:absolute; left:0.65rem; top:50%; transform:translateY(-50%); pointer-events:none;">
+            <circle cx="11" cy="11" r="8"></circle>
+            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- Data Table (Section 50-54) -->
+    <div class="ds-table-wrapper">
+      <table class="ds-table" id="menu-data-table">
+        <thead>
+          <tr>
+            <th style="width:60px; text-align:center;">FOTO</th>
+            <th>NAMA MENU</th>
+            <th>TIPE / TAB</th>
+            <th>KATEGORI</th>
+            <th style="text-align:right;">HARGA</th>
+            <th style="text-align:center;">STATUS</th>
+            <th>LABEL</th>
+            <th style="text-align:right; width:140px;">AKSI</th>
+          </tr>
+        </thead>
+        <tbody id="menu-table-body">
+          <!-- Populated by JavaScript -->
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Empty State -->
+    <div id="table-empty-state" style="display:none; padding:3rem 1rem; text-align:center; color:var(--ds-text-muted);">
+      <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="margin:0 auto 0.75rem auto; opacity:0.6;">
+        <circle cx="11" cy="11" r="8"></circle>
+        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+      </svg>
+      <div style="font-weight:600; color:var(--ds-text-primary); font-size:0.9375rem;">Tidak ada menu yang sesuai</div>
+      <p style="font-size:0.8125rem; margin-top:4px;">Coba ubah kata kunci pencarian atau reset filter kategori.</p>
+    </div>
+
+    <!-- Table Footer / Count -->
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-top:1rem; font-size:0.8125rem; color:var(--ds-text-muted); flex-wrap:wrap; gap:0.5rem;">
+      <div>Menampilkan <strong id="visible-count">0</strong> dari <span id="total-count">0</span> menu</div>
+      <div style="display:flex; gap:0.5rem;">
+        <button type="button" class="btn btn-secondary" id="btn-export-json" style="height:32px; font-size:0.75rem; padding:0 0.65rem;">
+          Ekspor JSON
+        </button>
+        <button type="button" class="btn btn-secondary" id="btn-reset-default" style="height:32px; font-size:0.75rem; padding:0 0.65rem;">
+          Reset Data Awal
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================================================================
+       4. MODAL: INPUT / EDIT MENU (With Dedicated Photo Space)
+       =================================================================== -->
+  <div class="ds-modal-backdrop" id="modal-menu-form" style="display:none;">
+    <div class="ds-modal" role="dialog" aria-labelledby="modal-form-title">
+      <div class="ds-modal-header">
+        <h3 class="ds-modal-title" id="modal-form-title">Tambah Menu Baru</h3>
+        <button type="button" class="ds-modal-close" id="btn-close-modal" aria-label="Tutup Dialog">✕</button>
+      </div>
+
+      <form id="form-menu-item">
+        <div class="ds-modal-body">
+          <input type="hidden" id="form-item-id" />
+
+          <!-- Nama Menu -->
+          <div class="ds-form-group">
+            <label for="form-item-name" class="ds-label ds-label-required">Nama Menu</label>
+            <input type="text" id="form-item-name" class="ds-input" required placeholder="Contoh: Kopi Ndalem / Sego Blendi" />
+          </div>
+
+          <!-- Tipe & Kategori -->
+          <div class="ds-form-row">
+            <div class="ds-form-group">
+              <label for="form-item-type" class="ds-label ds-label-required">Tipe Menu (Tab Sheet)</label>
+              <select id="form-item-type" class="ds-select" required>
+                <option value="minuman">Ombenan (Minuman)</option>
+                <option value="makanan">Panganan (Makanan)</option>
+              </select>
+              <div class="ds-helper">Menentukan letak tab di Google Sheet</div>
+            </div>
+
+            <div class="ds-form-group">
+              <label for="form-item-category" class="ds-label ds-label-required">Kategori</label>
+              <select id="form-item-category" class="ds-select" required>
+                <!-- Populated dynamically based on type -->
+              </select>
+            </div>
+          </div>
+
+          <!-- Harga & Status -->
+          <div class="ds-form-row">
+            <div class="ds-form-group">
+              <label for="form-item-price" class="ds-label ds-label-required">Harga (Rp)</label>
+              <input type="number" id="form-item-price" class="ds-input" required min="0" step="500" placeholder="5000" />
+              <div class="ds-helper" id="form-price-preview">Rp5.000</div>
+            </div>
+
+            <div class="ds-form-group">
+              <label for="form-item-status" class="ds-label">Status Ketersediaan</label>
+              <select id="form-item-status" class="ds-select">
+                <option value="Tersedia">Tersedia (Aktif)</option>
+                <option value="Habis">Habis (Kosong)</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- DEDICATED PHOTO SPACE (User Requirement: "space untuk fotonya") -->
+          <div class="ds-form-group">
+            <label class="ds-label">Foto Menu (Space Foto Terintegrasi)</label>
+            <div class="ds-photo-field-wrap">
+              <!-- Live Photo Preview Box -->
+              <div class="ds-photo-preview-slot" id="photo-preview-box">
+                <div class="ds-photo-preview-empty" id="photo-preview-empty">
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="margin-bottom:2px; opacity:0.6;">
+                    <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                    <circle cx="8.5" cy="8.5" r="1.5"></circle>
+                    <polyline points="21 15 16 10 5 21"></polyline>
+                  </svg>
+                  <span>Belum Ada Foto</span>
+                </div>
+                <img src="" id="photo-preview-img" alt="Preview Foto Menu" style="display:none;" />
+              </div>
+
+              <!-- Photo Controls -->
+              <div class="ds-photo-inputs">
+                <input
+                  type="text"
+                  id="form-item-image"
+                  class="ds-input"
+                  placeholder="URL Foto (Google Drive, WebP, Unsplash, atau upload file)"
+                  style="margin-bottom:6px;"
+                />
+
+                <div style="display:flex; align-items:center; gap:0.5rem; flex-wrap:wrap;">
+                  <label class="btn btn-secondary" style="height:32px; padding:0 0.75rem; font-size:0.75rem; cursor:pointer;">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                      <polyline points="17 8 12 3 7 8"></polyline>
+                      <line x1="12" y1="3" x2="12" y2="15"></line>
+                    </svg>
+                    <span>Pilih Foto dari Komputer</span>
+                    <input type="file" id="form-file-input" accept="image/*" style="display:none;" />
+                  </label>
+
+                  <button type="button" class="btn btn-secondary" id="btn-clear-photo" style="height:32px; padding:0 0.65rem; font-size:0.75rem; color:#B91C1C;">
+                    Hapus Foto
+                  </button>
+                </div>
+                <div class="ds-helper">Foto akan ditampilkan di halaman menu publik dan data tabel admin.</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Deskripsi Singkat -->
+          <div class="ds-form-group">
+            <label for="form-item-desc" class="ds-label">Deskripsi Menu</label>
+            <textarea id="form-item-desc" class="ds-textarea" placeholder="Tuliskan rasa khas atau keunikan racikan ini..."></textarea>
+          </div>
+
+          <!-- Catatan / Opsi Pilihan -->
+          <div class="ds-form-group">
+            <label for="form-item-notes" class="ds-label">Catatan / Opsi Tambahan</label>
+            <input type="text" id="form-item-notes" class="ds-input" placeholder="Contoh: Pilihan Gula: Biasa (+0) / Tropicana (+1.000)" />
+          </div>
+
+          <!-- Checkbox Signature & Favorit -->
+          <div style="display:flex; gap:1.5rem; margin-top:0.75rem; padding-top:0.75rem; border-top:1px solid var(--ds-border-subtle);">
+            <label style="display:flex; align-items:center; gap:0.45rem; font-size:0.875rem; cursor:pointer; color:var(--ds-text-primary);">
+              <input type="checkbox" id="form-item-signature" style="width:16px; height:16px; accent-color:var(--color-wood);" />
+              <span>Menu Signature Ndalem</span>
+            </label>
+
+            <label style="display:flex; align-items:center; gap:0.45rem; font-size:0.875rem; cursor:pointer; color:var(--ds-text-primary);">
+              <input type="checkbox" id="form-item-favorite" style="width:16px; height:16px; accent-color:var(--color-terracotta);" />
+              <span>Menu Favorit Pengunjung</span>
+            </label>
+          </div>
+        </div>
+
+        <div class="ds-modal-footer">
+          <button type="button" class="btn btn-secondary" id="btn-cancel-modal">Batal</button>
+          <button type="submit" class="btn btn-primary" id="btn-save-menu">Simpan Menu</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ===================================================================
+       5. MODAL: GOOGLE APPS SCRIPT CODE & SETUP GUIDE
+       =================================================================== -->
+  <div class="ds-modal-backdrop" id="modal-gas-code" style="display:none;">
+    <div class="ds-modal" style="max-width:760px;">
+      <div class="ds-modal-header">
+        <h3 class="ds-modal-title">Panduan Google Apps Script Backend</h3>
+        <button type="button" class="ds-modal-close" id="btn-close-gas-modal">✕</button>
+      </div>
+
+      <div class="ds-modal-body">
+        <p style="font-size:0.875rem; color:var(--ds-text-secondary); margin-bottom:1rem; line-height:1.5;">
+          Kode ini menghubungkan Admin Ndalem Kopi dengan Google Sheet Anda secara real-time. Salin kode di bawah, lalu buka Apps Script pada Google Sheet Anda.
+        </p>
+
+        <div style="background-color:#FAF7F2; border:1px solid var(--ds-border-default); border-radius:var(--radius-md); padding:0.85rem; margin-bottom:1rem; font-size:0.8125rem;">
+          <strong style="color:var(--color-wood);">Langkah Pemasangan (1 Menit):</strong>
+          <ol style="margin-left:1.25rem; margin-top:0.35rem; line-height:1.6; list-style-type:decimal;">
+            <li>Buka Sheet: <a href={SPREADSHEET_URL} target="_blank" style="color:var(--color-terracotta); text-decoration:underline;">Ndalem Coffee Spreadsheet</a></li>
+            <li>Klik menu <strong>Extensions (Ekstensi) &gt; Apps Script</strong></li>
+            <li>Hapus isi bawaan, lalu <strong>Paste (Tempel)</strong> kode di bawah</li>
+            <li>Klik <strong>Deploy (Terapkan) &gt; New deployment</strong></li>
+            <li>Pilih tipe <strong>Web app</strong>, atur <em>Who has access</em> ke <strong>"Anyone"</strong></li>
+            <li>Salin URL Web App dan tempelkan ke kolom URL Apps Script di dashboard ini!</li>
+          </ol>
+        </div>
+
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.35rem;">
+          <span style="font-size:0.75rem; font-weight:600; color:var(--ds-text-secondary); text-transform:uppercase;">Kode JavaScript (google-apps-script.js)</span>
+          <button type="button" class="btn btn-secondary" id="btn-copy-gas-code" style="height:28px; font-size:0.75rem; padding:0 0.5rem;">
+            Salin Seluruh Kode
+          </button>
+        </div>
+
+        <textarea
+          id="gas-code-textarea"
+          readonly
+          style="width:100%; height:240px; font-family:monospace; font-size:0.75rem; padding:0.75rem; border-radius:var(--radius-md); border:1px solid var(--ds-border-strong); background-color:#1E130D; color:#FAF7F2; resize:vertical;"
+        ></textarea>
+      </div>
+
+      <div class="ds-modal-footer">
+        <button type="button" class="btn btn-primary" id="btn-done-gas-modal">Selesai</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================================================================
+       6. MODAL: KONFIRMASI HAPUS (Rule 94 desinsystem.md)
+       =================================================================== -->
+  <div class="ds-modal-backdrop" id="modal-delete-confirm" style="display:none;">
+    <div class="ds-modal" style="max-width:440px;">
+      <div class="ds-modal-header">
+        <h3 class="ds-modal-title" style="color:#991B1B;">Hapus Menu</h3>
+        <button type="button" class="ds-modal-close" id="btn-close-delete-modal">✕</button>
+      </div>
+      <div class="ds-modal-body">
+        <p style="font-size:0.875rem; color:var(--ds-text-primary);" id="delete-confirm-text">
+          Apakah Anda yakin ingin menghapus menu ini dari database?
+        </p>
+        <p style="font-size:0.75rem; color:var(--ds-text-muted); margin-top:0.5rem;">
+          Tindakan ini akan menghapus data pada sistem lokal dan mengirim instruksi hapus ke Google Sheet.
+        </p>
+      </div>
+      <div class="ds-modal-footer">
+        <button type="button" class="btn btn-secondary" id="btn-cancel-delete">Batal</button>
+        <button type="button" class="btn btn-primary" id="btn-confirm-delete" style="background-color:#B91C1C; border-color:#B91C1C;">Hapus Sekarang</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notification Bar (Section 60 Flash message) -->
+  <div id="ds-toast" style="position:fixed; bottom:1.5rem; right:1.5rem; background-color:var(--color-wood); color:#FAF7F2; padding:0.75rem 1.25rem; border-radius:var(--radius-md); font-size:0.875rem; display:none; align-items:center; gap:0.5rem; z-index:2000; box-shadow:0 10px 25px rgba(40,29,23,0.25);">
+    <span id="toast-message">Pesan sukses</span>
+  </div>
+
+  <style>
+    .ds-filter-tab {
+      background: transparent;
+      border: none;
+      padding: 0.35rem 0.85rem;
+      font-size: 0.8125rem;
+      font-weight: 500;
+      color: var(--ds-text-secondary);
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      transition: all var(--transition-fast);
+    }
+    .ds-filter-tab:hover {
+      color: var(--color-wood);
+      background-color: var(--ds-bg-muted);
+    }
+    .ds-filter-tab.active {
+      background-color: #FFFFFF;
+      color: var(--color-wood);
+      font-weight: 600;
+      box-shadow: 0 1px 2px rgba(40, 29, 23, 0.06);
+    }
+    .ds-table-thumb {
+      width: 44px;
+      height: 44px;
+      border-radius: var(--radius-sm);
+      object-fit: cover;
+      display: block;
+      border: 1px solid var(--ds-border-default);
+      background-color: var(--ds-bg-muted);
+    }
+    .ds-table-thumb-empty {
+      width: 44px;
+      height: 44px;
+      border-radius: var(--radius-sm);
+      background-color: var(--ds-bg-muted);
+      border: 1px dashed var(--ds-border-default);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--color-terracotta);
+      font-size: 0.625rem;
+      text-align: center;
+    }
+  </style>
+
+  <!-- Client JavaScript for Full Admin Capabilities -->
+  <script is:inline define:vars={{ initialMenuJson, categoriesJson }}>
+    const STORAGE_KEY = 'ndalem_kopi_menu_items';
+    const GAS_URL_KEY = 'ndalem_kopi_gas_url';
+
+    const defaultItems = JSON.parse(initialMenuJson);
+    const categories = JSON.parse(categoriesJson);
+
+    // State
+    let items = [];
+    let activeTypeFilter = 'all';
+    let activeCategoryFilter = 'all';
+    let activeStatusFilter = 'all';
+    let searchQuery = '';
+    let pendingDeleteId = null;
+
+    // Load Items from LocalStorage or default
+    function loadItems() {
+      try {
+        const saved = localStorage.getItem(STORAGE_KEY);
+        if (saved) {
+          items = JSON.parse(saved);
+        } else {
+          items = [...defaultItems];
+          saveItemsLocal();
+        }
+      } catch (e) {
+        items = [...defaultItems];
+      }
+      updateKpis();
+      renderTable();
+    }
+
+    function saveItemsLocal() {
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(items));
+      } catch (e) {
+        console.error('Gagal menyimpan ke localStorage', e);
+      }
+    }
+
+    function formatRupiah(num) {
+      return 'Rp' + Number(num || 0).toLocaleString('id-ID');
+    }
+
+    function showToast(msg, isError = false) {
+      const toast = document.getElementById('ds-toast');
+      const toastMsg = document.getElementById('toast-message');
+      if (toast && toastMsg) {
+        toastMsg.textContent = msg;
+        toast.style.backgroundColor = isError ? '#991B1B' : '#2B1C14';
+        toast.style.display = 'flex';
+        setTimeout(() => {
+          toast.style.display = 'none';
+        }, 3500);
+      }
+    }
+
+    function updateKpis() {
+      const totalCount = items.length;
+      const minumanCount = items.filter(i => (i.type || '').toLowerCase() === 'minuman').length;
+      const makananCount = items.filter(i => (i.type || '').toLowerCase() === 'makanan').length;
+
+      const elTotal = document.getElementById('kpi-total-count');
+      const elMinuman = document.getElementById('kpi-minuman-count');
+      const elMakanan = document.getElementById('kpi-makanan-count');
+
+      if (elTotal) elTotal.textContent = totalCount;
+      if (elMinuman) elMinuman.textContent = minumanCount;
+      if (elMakanan) elMakanan.textContent = makananCount;
+
+      const elTotalFoot = document.getElementById('total-count');
+      if (elTotalFoot) elTotalFoot.textContent = totalCount;
+    }
+
+    function filterItems() {
+      return items.filter(item => {
+        // Type filter
+        if (activeTypeFilter !== 'all' && (item.type || '').toLowerCase() !== activeTypeFilter) {
+          return false;
+        }
+        // Category filter
+        if (activeCategoryFilter !== 'all' && item.category !== activeCategoryFilter) {
+          return false;
+        }
+        // Status filter
+        if (activeStatusFilter !== 'all' && (item.status || 'Tersedia') !== activeStatusFilter) {
+          return false;
+        }
+        // Search query
+        if (searchQuery) {
+          const q = searchQuery.toLowerCase();
+          const nameMatch = (item.name || '').toLowerCase().includes(q);
+          const descMatch = (item.description || '').toLowerCase().includes(q);
+          const catMatch = (item.categoryName || '').toLowerCase().includes(q);
+          if (!nameMatch && !descMatch && !catMatch) return false;
+        }
+        return true;
+      });
+    }
+
+    function renderTable() {
+      const tbody = document.getElementById('menu-table-body');
+      const emptyState = document.getElementById('table-empty-state');
+      const visibleCountEl = document.getElementById('visible-count');
+      if (!tbody) return;
+
+      const filtered = filterItems();
+      if (visibleCountEl) visibleCountEl.textContent = filtered.length;
+
+      if (filtered.length === 0) {
+        tbody.innerHTML = '';
+        if (emptyState) emptyState.style.display = 'block';
+        return;
+      }
+
+      if (emptyState) emptyState.style.display = 'none';
+
+      let html = '';
+      filtered.forEach(item => {
+        const itemType = (item.type || 'minuman').toLowerCase();
+        const typeBadge = itemType === 'minuman' 
+          ? '<span class="ds-badge ds-badge-info">Minuman</span>'
+          : '<span class="ds-badge ds-badge-neutral">Makanan</span>';
+
+        const status = item.status || 'Tersedia';
+        const statusBadge = status === 'Tersedia'
+          ? `<button type="button" class="ds-badge ds-badge-success" onclick="window.toggleMenuStatus('${item.id}')" title="Klik untuk ubah status">● Tersedia</button>`
+          : `<button type="button" class="ds-badge ds-badge-danger" onclick="window.toggleMenuStatus('${item.id}')" title="Klik untuk ubah status">✕ Habis</button>`;
+
+        let badges = '';
+        if (item.signature) badges += '<span class="ds-badge ds-badge-warning" style="margin-right:3px;">Signature</span>';
+        if (item.favorite) badges += '<span class="ds-badge ds-badge-info">Favorit</span>';
+        if (!badges) badges = '<span style="color:var(--ds-text-muted); font-size:0.75rem;">—</span>';
+
+        // Photo slot render (thumbnail or empty placeholder)
+        const photoCol = item.image 
+          ? `<img src="${item.image}" alt="${item.name}" class="ds-table-thumb" loading="lazy" />`
+          : `<div class="ds-table-thumb-empty" title="Belum ada foto">
+               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                 <path d="M12 2a10 10 0 0 0-10 10c0 5.523 4.477 10 10 10s10-4.477 10-10A10 10 0 0 0 12 2z"></path>
+               </svg>
+             </div>`;
+
+        html += `
+          <tr data-id="${item.id}">
+            <td style="text-align:center;">${photoCol}</td>
+            <td>
+              <div style="font-weight:600; color:var(--color-wood);">${item.name}</div>
+              ${item.notes ? `<div style="font-size:0.75rem; color:var(--color-amber);">${item.notes}</div>` : ''}
+              ${item.description ? `<div style="font-size:0.75rem; color:var(--ds-text-muted); max-width:260px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${item.description}</div>` : ''}
+            </td>
+            <td>${typeBadge}</td>
+            <td style="font-size:0.8125rem; color:var(--ds-text-secondary);">${item.categoryName || item.category || '—'}</td>
+            <td style="text-align:right; font-weight:700; color:var(--color-wood);">${formatRupiah(item.price)}</td>
+            <td style="text-align:center;">${statusBadge}</td>
+            <td>${badges}</td>
+            <td style="text-align:right; white-space:nowrap;">
+              <button type="button" class="ds-action-btn" onclick="window.editMenuItem('${item.id}')">Edit</button>
+              <button type="button" class="ds-action-btn ds-action-btn-danger" onclick="window.openDeleteModal('${item.id}')">Hapus</button>
+            </td>
+          </tr>
+        `;
+      });
+
+      tbody.innerHTML = html;
+    }
+
+    // Toggle Status Tersedia <-> Habis
+    window.toggleMenuStatus = function(id) {
+      const idx = items.findIndex(i => i.id === id);
+      if (idx !== -1) {
+        items[idx].status = items[idx].status === 'Habis' ? 'Tersedia' : 'Habis';
+        saveItemsLocal();
+        renderTable();
+        showToast(`Status '${items[idx].name}' diubah menjadi ${items[idx].status}`);
+        syncSingleItemToGas(items[idx], 'update');
+      }
+    };
+
+    // Populate Category Dropdown inside modal based on Type
+    function updateCategoryDropdown(selectedType, currentCatId = '') {
+      const select = document.getElementById('form-item-category');
+      if (!select) return;
+
+      const filteredCats = categories.filter(c => c.type === selectedType);
+      select.innerHTML = '';
+      filteredCats.forEach(cat => {
+        const opt = document.createElement('option');
+        opt.value = cat.id;
+        opt.textContent = cat.name;
+        if (cat.id === currentCatId) opt.selected = true;
+        select.appendChild(opt);
+      });
+    }
+
+    // Photo Preview Handlers
+    function updatePhotoPreview(url) {
+      const img = document.getElementById('photo-preview-img');
+      const empty = document.getElementById('photo-preview-empty');
+      if (url && url.trim()) {
+        img.src = url;
+        img.style.display = 'block';
+        empty.style.display = 'none';
+      } else {
+        img.src = '';
+        img.style.display = 'none';
+        empty.style.display = 'flex';
+      }
+    }
+
+    // Open Add Menu Modal
+    function openAddModal() {
+      document.getElementById('modal-form-title').textContent = 'Tambah Menu Baru';
+      document.getElementById('form-item-id').value = '';
+      document.getElementById('form-item-name').value = '';
+      document.getElementById('form-item-type').value = 'minuman';
+      updateCategoryDropdown('minuman');
+      document.getElementById('form-item-price').value = '5000';
+      document.getElementById('form-price-preview').textContent = formatRupiah(5000);
+      document.getElementById('form-item-status').value = 'Tersedia';
+      document.getElementById('form-item-image').value = '';
+      document.getElementById('form-item-desc').value = '';
+      document.getElementById('form-item-notes').value = '';
+      document.getElementById('form-item-signature').checked = false;
+      document.getElementById('form-item-favorite').checked = false;
+      updatePhotoPreview('');
+
+      document.getElementById('modal-menu-form').style.display = 'flex';
+    }
+
+    // Open Edit Menu Modal
+    window.editMenuItem = function(id) {
+      const item = items.find(i => i.id === id);
+      if (!item) return;
+
+      document.getElementById('modal-form-title').textContent = 'Edit Menu: ' + item.name;
+      document.getElementById('form-item-id').value = item.id;
+      document.getElementById('form-item-name').value = item.name || '';
+      const type = (item.type || 'minuman').toLowerCase();
+      document.getElementById('form-item-type').value = type;
+      updateCategoryDropdown(type, item.category);
+      document.getElementById('form-item-price').value = item.price || 0;
+      document.getElementById('form-price-preview').textContent = formatRupiah(item.price || 0);
+      document.getElementById('form-item-status').value = item.status || 'Tersedia';
+      document.getElementById('form-item-image').value = item.image || '';
+      document.getElementById('form-item-desc').value = item.description || '';
+      document.getElementById('form-item-notes').value = item.notes || '';
+      document.getElementById('form-item-signature').checked = Boolean(item.signature);
+      document.getElementById('form-item-favorite').checked = Boolean(item.favorite);
+      updatePhotoPreview(item.image || '');
+
+      document.getElementById('modal-menu-form').style.display = 'flex';
+    };
+
+    // Open Delete Modal
+    window.openDeleteModal = function(id) {
+      const item = items.find(i => i.id === id);
+      if (!item) return;
+      pendingDeleteId = id;
+      const textEl = document.getElementById('delete-confirm-text');
+      if (textEl) {
+        textEl.innerHTML = `Apakah Anda yakin ingin menghapus <strong>"${item.name}"</strong> dari menu?`;
+      }
+      document.getElementById('modal-delete-confirm').style.display = 'flex';
+    };
+
+    // Sync to Google Apps Script
+    async function syncSingleItemToGas(item, action) {
+      const gasUrl = (localStorage.getItem(GAS_URL_KEY) || '').trim();
+      if (!gasUrl) return; // Silent if no URL yet
+
+      try {
+        await fetch(gasUrl, {
+          method: 'POST',
+          mode: 'no-cors',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ action: action, item: item })
+        });
+        console.log(`Berhasil kirim action ${action} ke Google Sheet`);
+      } catch (err) {
+        console.warn('Gagal POST ke Google Apps Script', err);
+      }
+    }
+
+    // Setup Event Listeners
+    document.addEventListener('DOMContentLoaded', () => {
+      loadItems();
+
+      // Load saved GAS URL
+      const savedGasUrl = localStorage.getItem(GAS_URL_KEY) || '';
+      const gasUrlInput = document.getElementById('gas-endpoint-url');
+      if (gasUrlInput && savedGasUrl) {
+        gasUrlInput.value = savedGasUrl;
+      }
+
+      // Save GAS URL button
+      document.getElementById('btn-save-gas-url')?.addEventListener('click', () => {
+        const val = (gasUrlInput?.value || '').trim();
+        localStorage.setItem(GAS_URL_KEY, val);
+        showToast('URL Google Apps Script berhasil disimpan!');
+      });
+
+      // Type tabs filter
+      document.querySelectorAll('.ds-filter-tab').forEach(tab => {
+        tab.addEventListener('click', () => {
+          document.querySelectorAll('.ds-filter-tab').forEach(t => t.classList.remove('active'));
+          tab.classList.add('active');
+          activeTypeFilter = tab.dataset.filterType || 'all';
+
+          // Update Category dropdown in filter toolbar
+          const catSelect = document.getElementById('filter-category');
+          if (catSelect) {
+            catSelect.innerHTML = '<option value="all">Semua Kategori</option>';
+            const relevantCats = activeTypeFilter === 'all' 
+              ? categories 
+              : categories.filter(c => c.type === activeTypeFilter);
+            relevantCats.forEach(c => {
+              const opt = document.createElement('option');
+              opt.value = c.id;
+              opt.textContent = c.name;
+              catSelect.appendChild(opt);
+            });
+            activeCategoryFilter = 'all';
+          }
+
+          const badgeEl = document.getElementById('table-filtered-badge');
+          if (badgeEl) {
+            badgeEl.textContent = activeTypeFilter === 'all' ? 'Semua Menu' : (activeTypeFilter === 'minuman' ? 'Ombenan (Sheet Minuman)' : 'Panganan (Sheet Makanan)');
+          }
+
+          renderTable();
+        });
+      });
+
+      // Filter Toolbar events
+      document.getElementById('filter-category')?.addEventListener('change', (e) => {
+        activeCategoryFilter = e.target.value;
+        renderTable();
+      });
+
+      document.getElementById('filter-status')?.addEventListener('change', (e) => {
+        activeStatusFilter = e.target.value;
+        renderTable();
+      });
+
+      document.getElementById('search-menu-input')?.addEventListener('input', (e) => {
+        searchQuery = e.target.value.trim();
+        renderTable();
+      });
+
+      // Add Menu Buttons
+      document.getElementById('btn-add-menu-topbar')?.addEventListener('click', openAddModal);
+      document.getElementById('btn-add-menu-main')?.addEventListener('click', openAddModal);
+
+      // Close Modal Form
+      const closeModal = () => {
+        document.getElementById('modal-menu-form').style.display = 'none';
+      };
+      document.getElementById('btn-close-modal')?.addEventListener('click', closeModal);
+      document.getElementById('btn-cancel-modal')?.addEventListener('click', closeModal);
+
+      // Modal Type Change -> Update Categories
+      document.getElementById('form-item-type')?.addEventListener('change', (e) => {
+        updateCategoryDropdown(e.target.value);
+      });
+
+      // Price input live preview
+      document.getElementById('form-item-price')?.addEventListener('input', (e) => {
+        document.getElementById('form-price-preview').textContent = formatRupiah(e.target.value);
+      });
+
+      // Image URL live preview
+      document.getElementById('form-item-image')?.addEventListener('input', (e) => {
+        updatePhotoPreview(e.target.value);
+      });
+
+      // Clear photo button
+      document.getElementById('btn-clear-photo')?.addEventListener('click', () => {
+        document.getElementById('form-item-image').value = '';
+        updatePhotoPreview('');
+      });
+
+      // File upload to Data URL preview
+      document.getElementById('form-file-input')?.addEventListener('change', (e) => {
+        const file = e.target.files?.[0];
+        if (file) {
+          const reader = new FileReader();
+          reader.onload = (uploadEvent) => {
+            const dataUrl = uploadEvent.target?.result;
+            document.getElementById('form-item-image').value = dataUrl;
+            updatePhotoPreview(dataUrl);
+            showToast('Foto lokal berhasil dimuat!');
+          };
+          reader.readAsDataURL(file);
+        }
+      });
+
+      // Form Submit (Save / Edit)
+      document.getElementById('form-menu-item')?.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const id = document.getElementById('form-item-id').value;
+        const name = document.getElementById('form-item-name').value.trim();
+        const type = document.getElementById('form-item-type').value;
+        const catSelect = document.getElementById('form-item-category');
+        const categoryId = catSelect.value;
+        const categoryName = catSelect.options[catSelect.selectedIndex]?.text || '';
+        const price = Number(document.getElementById('form-item-price').value || 0);
+        const status = document.getElementById('form-item-status').value;
+        const image = document.getElementById('form-item-image').value.trim();
+        const description = document.getElementById('form-item-desc').value.trim();
+        const notes = document.getElementById('form-item-notes').value.trim();
+        const signature = document.getElementById('form-item-signature').checked;
+        const favorite = document.getElementById('form-item-favorite').checked;
+
+        if (!name) {
+          alert('Nama menu wajib diisi');
+          return;
+        }
+
+        if (id) {
+          // Update
+          const idx = items.findIndex(i => i.id === id);
+          if (idx !== -1) {
+            items[idx] = {
+              ...items[idx],
+              name,
+              type,
+              category: categoryId,
+              categoryName,
+              price,
+              status,
+              image,
+              description,
+              notes,
+              signature,
+              favorite,
+              updatedAt: new Date().toISOString()
+            };
+            saveItemsLocal();
+            renderTable();
+            updateKpis();
+            closeModal();
+            showToast(`Menu "${name}" berhasil diperbarui!`);
+            syncSingleItemToGas(items[idx], 'update');
+          }
+        } else {
+          // Create New
+          const newId = name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '') + '-' + Date.now().toString().slice(-4);
+          const newItem = {
+            id: newId,
+            name,
+            type,
+            category: categoryId,
+            categoryName,
+            price,
+            status,
+            image,
+            description,
+            notes,
+            signature,
+            favorite,
+            updatedAt: new Date().toISOString()
+          };
+          items.unshift(newItem);
+          saveItemsLocal();
+          renderTable();
+          updateKpis();
+          closeModal();
+          showToast(`Menu "${name}" berhasil ditambahkan!`);
+          syncSingleItemToGas(newItem, 'create');
+        }
+      });
+
+      // Delete confirmation
+      const closeDeleteModal = () => {
+        document.getElementById('modal-delete-confirm').style.display = 'none';
+        pendingDeleteId = null;
+      };
+      document.getElementById('btn-close-delete-modal')?.addEventListener('click', closeDeleteModal);
+      document.getElementById('btn-cancel-delete')?.addEventListener('click', closeDeleteModal);
+
+      document.getElementById('btn-confirm-delete')?.addEventListener('click', () => {
+        if (!pendingDeleteId) return;
+        const target = items.find(i => i.id === pendingDeleteId);
+        items = items.filter(i => i.id !== pendingDeleteId);
+        saveItemsLocal();
+        renderTable();
+        updateKpis();
+        closeDeleteModal();
+        if (target) {
+          showToast(`Menu "${target.name}" berhasil dihapus`);
+          syncSingleItemToGas({ id: target.id, type: target.type }, 'delete');
+        }
+      });
+
+      // Google Apps Script Modal
+      const gasModal = document.getElementById('modal-gas-code');
+      const gasTextarea = document.getElementById('gas-code-textarea');
+      
+      const loadGasCode = async () => {
+        if (!gasTextarea.value) {
+          try {
+            const res = await fetch('/google-apps-script.js');
+            if (res.ok) {
+              gasTextarea.value = await res.text();
+            }
+          } catch (e) {
+            gasTextarea.value = '// Buka file google-apps-script.js pada repositori ini';
+          }
+        }
+      };
+
+      const openGasModal = async () => {
+        await loadGasCode();
+        if (gasModal) gasModal.style.display = 'flex';
+      };
+
+      document.getElementById('btn-show-gas-code')?.addEventListener('click', openGasModal);
+      document.getElementById('btn-open-sync-modal')?.addEventListener('click', openGasModal);
+      document.getElementById('btn-close-gas-modal')?.addEventListener('click', () => {
+        if (gasModal) gasModal.style.display = 'none';
+      });
+      document.getElementById('btn-done-gas-modal')?.addEventListener('click', () => {
+        if (gasModal) gasModal.style.display = 'none';
+      });
+
+      // Copy GAS code
+      document.getElementById('btn-copy-gas-code')?.addEventListener('click', () => {
+        if (gasTextarea) {
+          gasTextarea.select();
+          navigator.clipboard.writeText(gasTextarea.value).then(() => {
+            showToast('Kode Apps Script berhasil disalin ke clipboard!');
+          });
+        }
+      });
+
+      // Sync All Now Button
+      document.getElementById('btn-sync-now')?.addEventListener('click', async () => {
+        const gasUrl = (localStorage.getItem(GAS_URL_KEY) || '').trim();
+        const label = document.getElementById('sync-btn-label');
+        if (!gasUrl) {
+          openGasModal();
+          showToast('Masukkan URL Apps Script Web App terlebih dahulu', true);
+          return;
+        }
+
+        if (label) label.textContent = 'Menyinkronkan...';
+        try {
+          await fetch(gasUrl, {
+            method: 'POST',
+            mode: 'no-cors',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ action: 'sync_all', items: items })
+          });
+          showToast('Permintaan sinkronisasi seluruh menu telah dikirim ke Google Sheet!');
+        } catch (e) {
+          showToast('Gagal sinkronisasi: ' + e.message, true);
+        } finally {
+          if (label) label.textContent = 'Sinkronisasi Sekarang';
+        }
+      });
+
+      // Export JSON
+      document.getElementById('btn-export-json')?.addEventListener('click', () => {
+        const blob = new Blob([JSON.stringify(items, null, 2)], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `Ndalem_Kopi_Menu_${new Date().toISOString().slice(0, 10)}.json`;
+        a.click();
+        URL.revokeObjectURL(url);
+        showToast('File JSON menu berhasil diunduh!');
+      });
+
+      // Reset to default
+      document.getElementById('btn-reset-default')?.addEventListener('click', () => {
+        if (confirm('Kembalikan seluruh data menu ke bawaan awal Ndalem Kopi? Perubahan kustom yang belum tersimpan ke sheet akan ditimpa.')) {
+          items = [...defaultItems];
+          saveItemsLocal();
+          renderTable();
+          updateKpis();
+          showToast('Data berhasil di-reset ke versi bawaan!');
+        }
+      });
+    });
+  </script>
+</AdminLayout>

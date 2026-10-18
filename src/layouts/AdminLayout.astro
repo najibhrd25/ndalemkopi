@@ -1,0 +1,229 @@
+---
+import '../styles/global.css';
+
+interface Props {
+  title?: string;
+  activeNav?: 'dashboard' | 'menu' | 'sheets' | 'categories';
+}
+
+const {
+  title = 'Pawon Admin — Ndalem Kopi',
+  activeNav = 'dashboard'
+} = Astro.props;
+
+const sheetUrl = "https://docs.google.com/spreadsheets/d/144rFHF79vDRl2n9TMRU9zwWDhRF4czLkoa7hTuJK5GU/edit?usp=sharing";
+---
+
+<!DOCTYPE html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{title}</title>
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="theme-color" content="#2B1C14" />
+
+    <!-- Google Fonts Preconnect: Figtree & Inter per desinsystem.md -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body class="ds-admin-shell">
+    <!-- ===================================================================
+         LEFT SIDEBAR (240px Fixed - Section 6, 27, 30 desinsystem.md)
+         =================================================================== -->
+    <aside class="ds-sidebar" id="admin-sidebar" aria-label="Navigasi Utama Admin">
+      <div class="ds-sidebar-header">
+        <a href="/admin" class="ds-sidebar-brand">
+          <div class="ds-sidebar-logo-icon">NK</div>
+          <div>
+            <div class="ds-sidebar-brand-name">Ndalem Kopi</div>
+            <div class="ds-sidebar-brand-sub">Admin Pawon v1.0</div>
+          </div>
+        </a>
+      </div>
+
+      <nav class="ds-sidebar-nav">
+        <span class="ds-sidebar-label">MANAJEMEN UTAMA</span>
+
+        <a
+          href="/admin"
+          class={`ds-sidebar-item ${activeNav === 'dashboard' ? 'active' : ''}`}
+          id="nav-dashboard"
+        >
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="3" width="7" height="7"></rect>
+            <rect x="14" y="3" width="7" height="7"></rect>
+            <rect x="14" y="14" width="7" height="7"></rect>
+            <rect x="3" y="14" width="7" height="7"></rect>
+          </svg>
+          <span>Dashboard</span>
+        </a>
+
+        <a
+          href="#section-menu-table"
+          class={`ds-sidebar-item ${activeNav === 'menu' ? 'active' : ''}`}
+          id="nav-menu"
+        >
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M18 8h1a4 4 0 0 1 0 8h-1"></path>
+            <path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"></path>
+            <line x1="6" y1="1" x2="6" y2="4"></line>
+            <line x1="10" y1="1" x2="10" y2="4"></line>
+            <line x1="14" y1="1" x2="14" y2="4"></line>
+          </svg>
+          <span>Daftar & Input Menu</span>
+        </a>
+
+        <a
+          href="#section-sheets-sync"
+          class={`ds-sidebar-item ${activeNav === 'sheets' ? 'active' : ''}`}
+          id="nav-sheets"
+        >
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+            <polyline points="14 2 14 8 20 8"></polyline>
+            <line x1="16" y1="13" x2="8" y2="13"></line>
+            <line x1="16" y1="17" x2="8" y2="17"></line>
+            <polyline points="10 9 9 9 8 9"></polyline>
+          </svg>
+          <span>Google Sheet DB</span>
+        </a>
+
+        <span class="ds-sidebar-label">NAVIGASI SITUS</span>
+
+        <a href="/" target="_blank" class="ds-sidebar-item">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+            <polyline points="9 22 9 12 15 12 15 22"></polyline>
+          </svg>
+          <span>Beranda Publik</span>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-left:auto; opacity:0.5;">
+            <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+            <polyline points="15 3 21 3 21 9"></polyline>
+            <line x1="10" y1="14" x2="21" y2="3"></line>
+          </svg>
+        </a>
+
+        <a href="/menu" target="_blank" class="ds-sidebar-item">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 2a10 10 0 0 0-10 10c0 5.523 4.477 10 10 10s10-4.477 10-10A10 10 0 0 0 12 2z"></path>
+            <path d="M8 14s1.5 2 4 2 4-2 4-2"></path>
+            <line x1="9" y1="9" x2="9.01" y2="9"></line>
+            <line x1="15" y1="9" x2="15.01" y2="9"></line>
+          </svg>
+          <span>Halaman Menu</span>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-left:auto; opacity:0.5;">
+            <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+            <polyline points="15 3 21 3 21 9"></polyline>
+            <line x1="10" y1="14" x2="21" y2="3"></line>
+          </svg>
+        </a>
+
+        <a href={sheetUrl} target="_blank" rel="noopener noreferrer" class="ds-sidebar-item">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+            <polyline points="15 3 21 3 21 9"></polyline>
+            <line x1="10" y1="14" x2="21" y2="3"></line>
+          </svg>
+          <span>Buka Google Sheet</span>
+        </a>
+      </nav>
+
+      <div class="ds-sidebar-footer">
+        <div style="display:flex; align-items:center; gap:0.65rem;">
+          <div style="width:32px; height:32px; border-radius:50%; background-color:#2B1C14; color:#FFF; display:flex; align-items:center; justify-content:center; font-size:0.75rem; font-weight:700;">
+            AP
+          </div>
+          <div style="flex:1; min-width:0;">
+            <div style="font-size:0.8125rem; font-weight:600; color:var(--ds-text-primary); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">
+              Admin Pawon
+            </div>
+            <div style="font-size:0.6875rem; color:#166534; display:flex; align-items:center; gap:4px;">
+              <span style="width:6px; height:6px; border-radius:50%; background-color:#16A34A; display:inline-block;"></span>
+              Database Aktif
+            </div>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- ===================================================================
+         MAIN VIEWPORT & TOPBAR
+         =================================================================== -->
+    <div class="ds-admin-main">
+      <header class="ds-topbar" role="banner">
+        <div class="ds-topbar-left">
+          <button type="button" class="ds-action-btn" id="sidebar-toggle-btn" style="display:none; padding:0.4rem;" aria-label="Toggle Menu">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="3" y1="12" x2="21" y2="12"></line>
+              <line x1="3" y1="6" x2="21" y2="6"></line>
+              <line x1="3" y1="18" x2="21" y2="18"></line>
+            </svg>
+          </button>
+          
+          <nav class="ds-breadcrumb" aria-label="Breadcrumb">
+            <span>Ndalem Kopi</span>
+            <span>/</span>
+            <span class="ds-breadcrumb-current">Manajemen Menu & Google Sheet</span>
+          </nav>
+        </div>
+
+        <div class="ds-topbar-right">
+          <!-- Sheet Status Indicator -->
+          <div class="ds-badge ds-badge-success" id="topbar-sync-status" title="Google Sheet Database status">
+            <span style="width:6px; height:6px; border-radius:50%; background-color:#16A34A; display:inline-block;"></span>
+            <span>Google Sheet Ready</span>
+          </div>
+
+          <!-- Quick Action Buttons -->
+          <button type="button" class="btn btn-secondary" id="btn-open-sync-modal" style="height:36px; padding:0 0.85rem; font-size:0.8125rem;">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="23 4 23 10 17 10"></polyline>
+              <polyline points="1 20 1 14 7 14"></polyline>
+              <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path>
+            </svg>
+            <span>Sync Sheet</span>
+          </button>
+
+          <button type="button" class="btn btn-primary" id="btn-add-menu-topbar" style="height:36px; padding:0 1rem; font-size:0.8125rem;">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="12" y1="5" x2="12" y2="19"></line>
+              <line x1="5" y1="12" x2="19" y2="12"></line>
+            </svg>
+            <span>+ Tambah Menu</span>
+          </button>
+        </div>
+      </header>
+
+      <main class="ds-content-body">
+        <slot />
+      </main>
+    </div>
+
+    <script is:inline>
+      // Responsive sidebar toggle for smaller tablets
+      const toggleBtn = document.getElementById('sidebar-toggle-btn');
+      const sidebar = document.getElementById('admin-sidebar');
+      if (toggleBtn && sidebar) {
+        if (window.innerWidth <= 900) {
+          toggleBtn.style.display = 'inline-flex';
+        }
+        window.addEventListener('resize', () => {
+          if (window.innerWidth <= 900) {
+            toggleBtn.style.display = 'inline-flex';
+          } else {
+            toggleBtn.style.display = 'none';
+            sidebar.classList.remove('open');
+          }
+        });
+        toggleBtn.addEventListener('click', () => {
+          sidebar.classList.toggle('open');
+        });
+      }
+    </script>
+  </body>
+</html>

@@ -11,30 +11,66 @@ const { item, variant = 'editorial' } = Astro.props;
 ---
 
 {variant === 'editorial' ? (
-  <article class="menu-item-row">
-    <div class="menu-item-header">
-      <div class="menu-item-title-wrap">
-        <h3 class="menu-item-name">{item.name}</h3>
-        {item.signature && <span class="badge badge-signature">Signature</span>}
-        {item.favorite && !item.signature && <span class="badge badge-favorite">Favorit</span>}
+  <article class="menu-item-row" data-item-id={item.id}>
+    {item.image && (
+      <div class="menu-item-thumb">
+        <img src={item.image} alt={item.name} loading="lazy" />
       </div>
-      <span class="dot-leader" aria-hidden="true"></span>
-      <span class="menu-item-price">{formatPrice(item.price)}</span>
+    )}
+    <div class="menu-item-content">
+      <div class="menu-item-header">
+        <div class="menu-item-title-wrap">
+          <h3 class="menu-item-name">{item.name}</h3>
+          {item.signature && <span class="badge badge-signature">Signature</span>}
+          {item.favorite && !item.signature && <span class="badge badge-favorite">Favorit</span>}
+        </div>
+        <span class="dot-leader" aria-hidden="true"></span>
+        <span class="menu-item-price">{formatPrice(item.price)}</span>
+      </div>
+      {item.description && <p class="menu-item-desc">{item.description}</p>}
+      {item.notes && <p class="menu-item-note">{item.notes}</p>}
     </div>
-    {item.description && <p class="menu-item-desc">{item.description}</p>}
-    {item.notes && <p class="menu-item-note">{item.notes}</p>}
   </article>
 ) : (
-  <article class="menu-card text-center" data-category={item.category} data-type={item.type}>
-    <div class="menu-card-body">
-      <div class="menu-card-top">
-        <div class="menu-card-title-group">
-          <h3 class="menu-card-name">{item.name}</h3>
-          <div class="badge-group">
-            {item.signature && <span class="badge badge-signature">Signature</span>}
-            {item.favorite && <span class="badge badge-favorite">Favorit</span>}
+  <article class="menu-card" data-item-id={item.id} data-category={item.category} data-type={item.type}>
+    {/* Dedicated Photo Space (User requirement) */}
+    <div class="menu-card-media">
+      {item.image ? (
+        <img src={item.image} alt={item.name} loading="lazy" class="menu-card-img" />
+      ) : (
+        <div class="menu-card-placeholder">
+          <div class="placeholder-icon" aria-hidden="true">
+            {item.type === 'minuman' ? (
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M18 8h1a4 4 0 0 1 0 8h-1"></path>
+                <path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"></path>
+                <line x1="6" y1="1" x2="6" y2="4"></line>
+                <line x1="10" y1="1" x2="10" y2="4"></line>
+                <line x1="14" y1="1" x2="14" y2="4"></line>
+              </svg>
+            ) : (
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 2a10 10 0 0 0-10 10c0 5.523 4.477 10 10 10s10-4.477 10-10A10 10 0 0 0 12 2z"></path>
+                <path d="M8 14s1.5 2 4 2 4-2 4-2"></path>
+                <line x1="9" y1="9" x2="9.01" y2="9"></line>
+                <line x1="15" y1="9" x2="15.01" y2="9"></line>
+              </svg>
+            )}
           </div>
+          <span class="placeholder-label">{item.categoryName || (item.type === 'minuman' ? 'Ombenan' : 'Panganan')}</span>
         </div>
+      )}
+      
+      {/* Badge Overlay */}
+      <div class="media-badges">
+        {item.signature && <span class="badge badge-signature">Signature</span>}
+        {item.favorite && <span class="badge badge-favorite">Favorit</span>}
+      </div>
+    </div>
+
+    <div class="menu-card-body">
+      <div class="menu-card-header-info">
+        <h3 class="menu-card-name">{item.name}</h3>
         <span class="menu-card-price">{formatPrice(item.price)}</span>
       </div>
 
@@ -50,95 +86,146 @@ const { item, variant = 'editorial' } = Astro.props;
 )}
 
 <style>
-  /* Card specific styles (Center aligned for /menu) */
+  /* Editorial Row Thumbnail */
+  .menu-item-thumb {
+    width: 52px;
+    height: 52px;
+    border-radius: var(--radius-sm);
+    overflow: hidden;
+    flex-shrink: 0;
+    margin-right: 0.75rem;
+    border: 1px solid var(--color-border);
+  }
+
+  .menu-item-thumb img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  /* Card specific styles (Center aligned & equal height bento grid friendly) */
   .menu-card {
     background-color: var(--color-bg-card);
     border: 1px solid var(--color-border);
-    border-radius: var(--radius-md);
-    padding: var(--space-5);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    align-items: center;
-    text-align: center;
-    gap: var(--space-3);
+    height: 100%;
     transition: all var(--transition-fast);
+    box-shadow: 0 1px 3px rgba(40, 29, 23, 0.04);
   }
 
   .menu-card:hover {
     border-color: var(--color-terracotta);
-    box-shadow: var(--shadow-subtle);
+    box-shadow: 0 4px 12px rgba(40, 29, 23, 0.08);
     transform: translateY(-2px);
   }
 
+  /* Dedicated Photo Space */
+  .menu-card-media {
+    position: relative;
+    width: 100%;
+    height: 140px;
+    background-color: var(--color-bg-surface);
+    overflow: hidden;
+    border-bottom: 1px solid var(--color-border-subtle);
+  }
+
+  .menu-card-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform var(--transition-normal);
+  }
+
+  .menu-card:hover .menu-card-img {
+    transform: scale(1.04);
+  }
+
+  .menu-card-placeholder {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.35rem;
+    color: var(--color-text-subtle);
+    background: linear-gradient(145deg, #F9F4EC, #EDE3D4);
+  }
+
+  .placeholder-icon {
+    color: var(--color-terracotta);
+    opacity: 0.75;
+  }
+
+  .placeholder-label {
+    font-size: 0.6875rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--color-text-muted);
+  }
+
+  .media-badges {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    display: flex;
+    gap: 4px;
+    z-index: 2;
+  }
+
+  /* Body Content */
   .menu-card-body {
-    width: 100%;
+    padding: var(--space-4);
     display: flex;
     flex-direction: column;
-    align-items: center;
-  }
-
-  .menu-card-top {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+    flex: 1;
     gap: var(--space-2);
-    margin-bottom: var(--space-2);
-    width: 100%;
   }
 
-  .menu-card-title-group {
+  .menu-card-header-info {
     display: flex;
     flex-direction: column;
-    align-items: center;
-    gap: var(--space-1);
-    text-align: center;
+    gap: 0.35rem;
   }
 
   .menu-card-name {
     font-family: var(--font-serif);
-    font-size: 1.125rem;
+    font-size: 1.0625rem;
     font-weight: 600;
     color: var(--color-wood);
     line-height: 1.3;
-    text-align: center;
-  }
-
-  .badge-group {
-    display: flex;
-    justify-content: center;
-    gap: var(--space-1);
-    flex-wrap: wrap;
   }
 
   .menu-card-price {
     font-family: var(--font-sans);
     font-size: 0.9375rem;
     font-weight: 700;
-    color: var(--color-wood);
-    background-color: var(--color-bg-surface);
-    padding: 0.25rem 0.8rem;
-    border-radius: var(--radius-pill);
-    white-space: nowrap;
-    display: inline-block;
+    color: var(--color-terracotta);
+    align-self: flex-start;
   }
 
   .menu-card-desc {
     font-size: var(--text-xs);
     color: var(--color-text-muted);
     line-height: 1.5;
-    text-align: center;
   }
 
   .menu-card-footer {
-    width: 100%;
-    padding-top: var(--space-2);
+    padding: var(--space-3) var(--space-4);
+    background-color: var(--color-bg-base);
     border-top: 1px dashed var(--color-border-subtle);
-    text-align: center;
   }
 
   .menu-item-note {
+    font-size: 0.6875rem;
+    color: var(--color-amber);
+    font-weight: 600;
     display: block;
-    text-align: center;
+    line-height: 1.4;
   }
 </style>

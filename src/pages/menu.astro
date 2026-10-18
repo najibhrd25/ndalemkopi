@@ -298,7 +298,11 @@ const foodCategories = CATEGORIES.filter((c) => c.type === 'makanan');
   }
 </style>
 
-<script>
+<script is:inline>
+  function formatRupiah(num) {
+    return 'Rp' + Number(num || 0).toLocaleString('id-ID');
+  }
+
   function setupMenuFilter() {
     const filterButtons = document.querySelectorAll<HTMLButtonElement>('.filter-btn');
     const typeBlocks = document.querySelectorAll<HTMLElement>('.menu-type-block');
@@ -330,6 +334,94 @@ const foodCategories = CATEGORIES.filter((c) => c.type === 'makanan');
     });
   }
 
+  function syncLiveAdminMenu() {
+    try {
+      const saved = localStorage.getItem('ndalem_kopi_menu_items');
+      if (!saved) return;
+      const items = JSON.parse(saved);
+      if (!Array.isArray(items)) return;
+
+      items.forEach((item) => {
+        if (!item || !item.id) return;
+        const existingCard = document.querySelector(`[data-item-id="${item.id}"]`);
+
+        if (existingCard) {
+          // Update status if Habis
+          if (item.status === 'Habis') {
+            existingCard.style.opacity = '0.6';
+            if (!existingCard.querySelector('.badge-habis')) {
+              const badgesContainer = existingCard.querySelector('.media-badges');
+              if (badgesContainer) {
+                const habisBadge = document.createElement('span');
+                habisBadge.className = 'badge badge-habis';
+                habisBadge.style.backgroundColor = '#991B1B';
+                habisBadge.style.color = '#FFFFFF';
+                habisBadge.textContent = 'Habis';
+                badgesContainer.appendChild(habisBadge);
+              }
+            }
+          } else {
+            existingCard.style.opacity = '1';
+            const habisBadge = existingCard.querySelector('.badge-habis');
+            if (habisBadge) habisBadge.remove();
+          }
+
+          // Update price if changed
+          const priceEl = existingCard.querySelector('.menu-card-price');
+          if (priceEl && item.price) {
+            priceEl.textContent = formatRupiah(item.price);
+          }
+        } else {
+          // New item added from admin! Insert into matching category grid
+          const categoryBlock = document.querySelector(`[data-category-id="${item.category}"] .menu-grid`);
+          if (categoryBlock) {
+            const card = document.createElement('article');
+            card.className = 'menu-card';
+            card.setAttribute('data-item-id', item.id);
+            card.setAttribute('data-category', item.category);
+            card.setAttribute('data-type', item.type || 'minuman');
+
+            const mediaContent = item.image
+              ? `<img src="${item.image}" alt="${item.name}" loading="lazy" class="menu-card-img" />`
+              : `<div class="menu-card-placeholder">
+                  <div class="placeholder-icon">
+                    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M18 8h1a4 4 0 0 1 0 8h-1"></path><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"></path></svg>
+                  </div>
+                  <span class="placeholder-label">${item.categoryName || 'Menu Pawon'}</span>
+                </div>`;
+
+            let badgesHtml = '';
+            if (item.signature) badgesHtml += '<span class="badge badge-signature">Signature</span>';
+            if (item.favorite) badgesHtml += '<span class="badge badge-favorite">Favorit</span>';
+            if (item.status === 'Habis') badgesHtml += '<span class="badge" style="background:#991B1B;color:#FFF;">Habis</span>';
+
+            card.innerHTML = `
+              <div class="menu-card-media">
+                ${mediaContent}
+                <div class="media-badges">${badgesHtml}</div>
+              </div>
+              <div class="menu-card-body">
+                <div class="menu-card-header-info">
+                  <h3 class="menu-card-name">${item.name}</h3>
+                  <span class="menu-card-price">${formatRupiah(item.price)}</span>
+                </div>
+                ${item.description ? `<p class="menu-card-desc">${item.description}</p>` : ''}
+              </div>
+              ${item.notes ? `<div class="menu-card-footer"><span class="menu-item-note">${item.notes}</span></div>` : ''}
+            `;
+            categoryBlock.appendChild(card);
+          }
+        }
+      });
+    } catch (e) {
+      console.warn('Sync live menu error:', e);
+    }
+  }
+
   setupMenuFilter();
-  document.addEventListener('astro:page-load', setupMenuFilter);
+  syncLiveAdminMenu();
+  document.addEventListener('astro:page-load', () => {
+    setupMenuFilter();
+    syncLiveAdminMenu();
+  });
 </script>
